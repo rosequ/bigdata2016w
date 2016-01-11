@@ -1,5 +1,10 @@
-ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/WordCount$MyMapperIMC.class
 ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/WordCount$MyReducer.class
 ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/WordCount.class
+ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/PrefixCount$MyMapperIMC.class
 ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/WordCount$Args.class
+ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/PrefixCount$Args.class
+ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/PrefixCount.class
 ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/WordCount$MyMapper.class
+ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/WordCount$MyMapperIMC.class
+ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/PrefixCount$MyMapper.class
+ca/uwaterloo/cs/bigdata2016w/xeniaqian94/assignment0/PrefixCount$MyReducer.class
