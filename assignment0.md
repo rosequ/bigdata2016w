@@ -1,10 +1,23 @@
-Question 1.
-16/01/10 22:21:53 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-Warning: fs.defaultFs is not set when running "cat" command.
+####Question 1.
+
 th	83289
+
 an	32003
+
 to	23826
-Question 2.
-16/01/10 22:21:54 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-Warning: fs.defaultFs is not set when running "cat" command.
+
+####Question 2.
 li	6532
+
+####Question 3.
+yes
+
+####Question 4.
+th      18487894
+
+in      8165787
+
+an      7399686
+
+####Question 5.
+li      1303312
