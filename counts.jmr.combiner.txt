@@ -1,0 +1,17 @@
+ 
+archive -archiveName
+checknative [-a|-h]
+CLASSNAME run
+classpath prints
+credential interact
+daemonlog get/set
+distcp <srcurl>
+fs run
+Hadoop jar
+jar <jar>
+Most commands
+or 
+trace view
+Usage: hadoop
+version print
+where COMMAND
