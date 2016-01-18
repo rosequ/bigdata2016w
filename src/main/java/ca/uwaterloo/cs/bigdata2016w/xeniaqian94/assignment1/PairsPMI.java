@@ -316,7 +316,7 @@ public class PairsPMI extends Configured implements Tool {
 		long startTime1 = System.currentTimeMillis();
 		job1.waitForCompletion(true);
 		LOG.info("First Job Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
-		LOG.info("Mapreduce count file has lines " + countLine);
+//		LOG.info("Mapreduce count file has lines " + countLine);
 
 		FileUtil.copyMerge(FileSystem.get(conf), new Path(sideDataPath+"/"), FileSystem.get(conf), new Path(sideDataPath+".txt"), false, getConf(), null);
 
@@ -360,7 +360,7 @@ public class PairsPMI extends Configured implements Tool {
 		job2.waitForCompletion(true);
 		LOG.info("Second Job Finished in " + (System.currentTimeMillis() - startTime2) / 1000.0 + " seconds");
 		LOG.info("Two Jobs together Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
-		LOG.info("Mapreduce count file has lines " + countLine);
+//		LOG.info("Mapreduce count file has lines " + countLine);
 
 		return 0;
 	}
