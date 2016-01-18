@@ -65,7 +65,7 @@ public class StripesPMI extends Configured implements Tool {
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
 			countLine += 1;
-			System.out.print(countLine+" ");
+			LOG.info(countLine+" ");
 
 			StringTokenizer itr = new StringTokenizer(line);
 
