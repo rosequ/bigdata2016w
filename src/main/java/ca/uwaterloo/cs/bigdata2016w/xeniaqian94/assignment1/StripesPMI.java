@@ -184,7 +184,6 @@ public class StripesPMI extends Configured implements Tool {
 	}
 
 	private static class SecondCombiner extends Reducer<Text, HMapStFW, Text, HMapStFW> {
-		private final static FloatWritable SUM = new FloatWritable();
 
 		@Override
 		public void reduce(Text key, Iterable<HMapStFW> values, Context context)
@@ -197,7 +196,8 @@ public class StripesPMI extends Configured implements Tool {
       }
       
       for (String term : map.keySet()) {
-      	System.out.println(key+", "+term+" "+map.get(term));
+      	if (key.toString()=="maine")
+      		System.out.println(key+", "+term+" "+map.get(term));
       }
 
       context.write(key, map);
@@ -250,7 +250,8 @@ public class StripesPMI extends Configured implements Tool {
       }
 
       for (String term : map.keySet()) {
-      	System.out.println(key+", "+term+" "+map.get(term));
+      	if (key.toString()=="maine")
+      		System.out.println(key+", "+term+" "+map.get(term));
       	if (map.get(term)>=10)
       		map_final.put(term, (float) Math.log10(map.get(term) * countLine
   						/ (individualOccurance.get(key) * individualOccurance.get(term))));    				
