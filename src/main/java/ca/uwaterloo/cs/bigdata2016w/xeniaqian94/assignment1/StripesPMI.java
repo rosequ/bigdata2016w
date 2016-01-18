@@ -254,7 +254,7 @@ public class StripesPMI extends Configured implements Tool {
       		System.out.println(key+", "+term+" "+map.get(term));
       	if (map.get(term)>=10)
       		map_final.put(term, (float) Math.log10(map.get(term) * countLine
-  						/ (individualOccurance.get(key) * individualOccurance.get(term))));    				
+  						/ (individualOccurance.get(key.toString()) * individualOccurance.get(term.toString()))));    				
       }
       context.write(key, map_final);
 		}
