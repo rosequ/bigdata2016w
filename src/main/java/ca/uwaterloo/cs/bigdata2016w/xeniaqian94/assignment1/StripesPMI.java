@@ -317,6 +317,12 @@ public class StripesPMI extends Configured implements Tool {
 		job1.setMapperClass(FirstMapper.class);
 		job1.setCombinerClass(FirstCombiner.class);
 		job1.setReducerClass(FirstReducer.class);
+		
+		job1.getConfiguration().setInt("mapred.max.split.size", 1024 * 1024 * 64);
+		job1.getConfiguration().set("mapreduce.map.memory.mb", "3072");
+		job1.getConfiguration().set("mapreduce.map.java.opts", "-Xmx3072m");
+		job1.getConfiguration().set("mapreduce.reduce.memory.mb", "3072");
+		job1.getConfiguration().set("mapreduce.reduce.java.opts", "-Xmx3072m");
 
 		// Delete the output directory if it exists already.
 		FileSystem.get(conf).delete(new Path(sideDataPath), true);
@@ -353,6 +359,12 @@ public class StripesPMI extends Configured implements Tool {
 		job2.setMapperClass(SecondMapper.class);
 		job2.setCombinerClass(SecondCombiner.class);
 		job2.setReducerClass(SecondReducer.class);
+		
+		job2.getConfiguration().setInt("mapred.max.split.size", 1024 * 1024 * 64);
+		job2.getConfiguration().set("mapreduce.map.memory.mb", "3072");
+		job2.getConfiguration().set("mapreduce.map.java.opts", "-Xmx3072m");
+		job2.getConfiguration().set("mapreduce.reduce.memory.mb", "3072");
+		job2.getConfiguration().set("mapreduce.reduce.java.opts", "-Xmx3072m");
 
 		// Delete the output directory if it exists already.
 		Path outputDir = new Path(args.output);

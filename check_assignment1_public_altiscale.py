@@ -29,9 +29,13 @@ def check_a1(u):
            "ca.uwaterloo.cs.bigdata2016w."+u+".assignment1.StripesPMI",
            "-input", "/shared/cs489/data/enwiki-20151201-pages-articles-0.1sample.txt", 
            "-output", "cs489-2016w-"+u+"-a1-wiki-stripes", "-reducers", "5" ])
-    print("Question 7.")
+    print("Question 7. Pairs")
     call("hadoop fs -cat cs489-2016w-"+u+"-a1-wiki-pairs/part-r-0000* | grep '(waterloo,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
     call("hadoop fs -cat cs489-2016w-"+u+"-a1-wiki-pairs/part-r-0000* | grep '(toronto,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
+
+    print("Question 7. Stripes")
+    call("hadoop fs -cat cs489-2016w-"+u+"-a1-wiki-stripes/part-r-0000* | grep '(waterloo,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
+    call("hadoop fs -cat cs489-2016w-"+u+"-a1-wiki-stripes/part-r-0000* | grep '(toronto,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
 	
 if __name__ == "__main__":
   try:

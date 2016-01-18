@@ -47,6 +47,11 @@ complete stripes implementation: 29.072 seconds
 77198, if (x,y) and (y,x) are different pairs (asymmetric)
 
 ####Question 5.
+
+The pair is "maine" and "anjou". 
+
+Following is the check script's output, as a reference:
+
 (maine, anjou)	3.6331422
 
 (anjou, maine)	3.6331422
@@ -74,11 +79,16 @@ There are special terms, names, etc. such as "Duke of Anjou and Maine", "Alexand
 These terms are also not that common pairs such as "a the". N(x,y), N(x), N(y) are all small in absolute count, which makes its N(x,y)/[N(x)*N(y)] value is relatively large. 
 
 ####Question 6.
+
+For "tears":
+
 (tears, shed)	2.1117902
 
 (tears, salt)	2.052812
 
 (tears, eyes)	1.165167
+
+For "death":
 
 (death, father's)	1.120252
 
@@ -88,4 +98,6 @@ These terms are also not that common pairs such as "a the". N(x,y), N(x), N(y) a
 
 
 ####Question 7.
+
+
 
