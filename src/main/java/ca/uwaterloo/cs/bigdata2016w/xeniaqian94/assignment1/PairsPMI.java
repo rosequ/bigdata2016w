@@ -301,6 +301,7 @@ public class PairsPMI extends Configured implements Tool {
 
 		// Delete the output directory if it exists already.
 		FileSystem.get(conf).delete(new Path(sideDataPath), true);
+		FileSystem.get(conf).delete(new Path(sideDataPath+".txt"), true);
 
 		long startTime1 = System.currentTimeMillis();
 		job1.waitForCompletion(true);
