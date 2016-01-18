@@ -195,6 +195,10 @@ public class StripesPMI extends Configured implements Tool {
       while (iter.hasNext()) {
         map.plus(iter.next());
       }
+      
+      for (String term : map.keySet()) {
+      	System.out.println(key+", "+term+" "+map.get(term));
+      }
 
       context.write(key, map);
 		}
@@ -238,6 +242,7 @@ public class StripesPMI extends Configured implements Tool {
 				throws IOException, InterruptedException {
 			
 			Iterator<HMapStFW> iter = values.iterator();
+			
       HMapStFW map = new HMapStFW();
       HMapStFW map_final = new HMapStFW();
       while (iter.hasNext()) {
@@ -245,7 +250,7 @@ public class StripesPMI extends Configured implements Tool {
       }
 
       for (String term : map.keySet()) {
-      	System.out.println(map.get(term)+" "+term);
+      	System.out.println(key+", "+term+" "+map.get(term));
       	if (map.get(term)>=10)
       		map_final.put(term, (float) Math.log10(map.get(term) * countLine
   						/ (individualOccurance.get(key) * individualOccurance.get(term))));    				
