@@ -194,19 +194,17 @@ public class StripesPMI extends Configured implements Tool {
       while (iter.hasNext()) {
         map.plus(iter.next());
       }
-      
-      for (String term : map.keySet()) {
-      	if (key.toString()=="maine")
-      		System.out.println(key+", "+term+" "+map.get(term));
-      }
 
       context.write(key, map);
 		}
 	}
 
-	private static class SecondReducer extends Reducer<Text, HMapStFW, Text, HMapStFW> {
+	private static class SecondReducer extends Reducer<Text, HMapStFW, PairOfStrings, FloatWritable> {
 		private static Map<String, Float> individualOccurance = new HashMap<String, Float>();
 
+		private static final PairOfStrings PAIR = new PairOfStrings();
+		private static final FloatWritable SUM = new FloatWritable(1);
+		
 		@Override
 		public void setup(Context context) throws IOException {
 			Configuration conf = context.getConfiguration();
@@ -250,14 +248,12 @@ public class StripesPMI extends Configured implements Tool {
       }
 
       for (String term : map.keySet()) {
-      	if (key.toString()=="maine")
-      		System.out.println(key+", "+term+" "+map.get(term));
       	if (map.get(term)>=10)
-      		map_final.put(term, (float) Math.log10(map.get(term) * countLine
-  						/ (individualOccurance.get(key.toString()) * individualOccurance.get(term))));    				
-      }
-      if (map_final.size()>0){
-      	context.write(key, map_final);
+      		PAIR.set(key.toString(),term);
+      	  
+      		SUM.set((float) Math.log10(map.get(term) * countLine
+  						/ (individualOccurance.get(key.toString()) * individualOccurance.get(term))));    		
+      		context.write(PAIR, SUM);
       }
 		}
 	}
@@ -350,8 +346,8 @@ public class StripesPMI extends Configured implements Tool {
 
 		job2.setMapOutputKeyClass(Text.class);
 		job2.setMapOutputValueClass(HMapStFW.class);
-		job2.setOutputKeyClass(Text.class);
-		job2.setOutputValueClass(HMapStFW.class);
+		job2.setOutputKeyClass(PairOfStrings.class);
+		job2.setOutputValueClass(FloatWritable.class);
 		job2.setOutputFormatClass(TextOutputFormat.class);
 
 		job2.setMapperClass(SecondMapper.class);
