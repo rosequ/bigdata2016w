@@ -4,9 +4,9 @@
 ####Question 2.
 ran on <code>linux.student.cs.uwaterloo.ca</code>
 
-complete pairs implementation: 51.813 seconds
+complete pairs implementation: 55.179 seconds
 
-complete stripes implementation: 28.031 seconds
+complete stripes implementation: 21.98 seconds
 
 ####Question 3.
 ran on <code>linux.student.cs.uwaterloo.ca</code>

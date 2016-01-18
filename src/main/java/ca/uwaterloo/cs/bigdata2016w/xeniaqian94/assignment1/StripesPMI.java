@@ -248,12 +248,13 @@ public class StripesPMI extends Configured implements Tool {
       }
 
       for (String term : map.keySet()) {
-      	if (map.get(term)>=10)
+      	if (map.get(term)>=10){
       		PAIR.set(key.toString(),term);
       	  
       		SUM.set((float) Math.log10(map.get(term) * countLine
   						/ (individualOccurance.get(key.toString()) * individualOccurance.get(term))));    		
       		context.write(PAIR, SUM);
+      	}
       }
 		}
 	}
