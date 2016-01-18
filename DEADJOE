@@ -1,0 +1,31 @@
+
+*** These modified files were found in JOE when it aborted on Sun Jan 17 15:55:20 2016
+*** JOE was aborted because the terminal closed
+
+*** File '(Unnamed)'
+.git/COMMIT_EDITMSG
+
+*** File '.git/COMMIT_EDITMSG'
+first mapreducwq
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	modified:   .gitignore
+#	new file:   firstMapreduceJob.txt
+#	new file:   firstMapreduceJob/._SUCCESS.crc
+#	new file:   firstMapreduceJob/.part-r-00000.crc
+#	new file:   firstMapreduceJob/.part-r-00001.crc
+#	new file:   firstMapreduceJob/.part-r-00002.crc
+#	new file:   firstMapreduceJob/.part-r-00003.crc
+#	new file:   firstMapreduceJob/.part-r-00004.crc
+#	new file:   firstMapreduceJob/_SUCCESS
+#	new file:   firstMapreduceJob/part-r-00000
+#	new file:   firstMapreduceJob/part-r-00001
+#	new file:   firstMapreduceJob/part-r-00002
+#	new file:   firstMapreduceJob/part-r-00003
+#	new file:   firstMapreduceJob/part-r-00004
+#

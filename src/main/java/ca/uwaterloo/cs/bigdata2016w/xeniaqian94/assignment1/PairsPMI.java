@@ -191,7 +191,7 @@ public class PairsPMI extends Configured implements Tool {
 		public void setup(Context context) throws IOException{
 			Configuration conf=context.getConfiguration();
 			FileSystem fs=FileSystem.get(conf);
-			Path infile=new Path(conf.get("sideDataPath"));
+			Path infile=new Path(conf.get("SideDataPath"));
 			if (!fs.exists(infile)){
 				throw new IOException("File not found in "+infile.toString());
 			}
@@ -265,7 +265,7 @@ public class PairsPMI extends Configured implements Tool {
 	public int run(String[] argv) throws Exception {
 		Args args = new Args();
 		CmdLineParser parser = new CmdLineParser(args, ParserProperties.defaults().withUsageWidth(100));
-		String sideDataPath = "firstMapReduceJob";
+		String sideDataPath = "./firstMapReduceJob";
 		try {
 			parser.parseArgument(argv);
 		} catch (CmdLineException e) {
@@ -285,7 +285,7 @@ public class PairsPMI extends Configured implements Tool {
 		job1.setJobName(PairsPMI.class.getSimpleName());
 		job1.setJarByClass(PairsPMI.class);
 
-		job1.setNumReduceTasks(args.numReducers);
+		job1.setNumReduceTasks(1);
 
 		FileInputFormat.setInputPaths(job1, new Path(args.input));
 		FileOutputFormat.setOutputPath(job1, new Path(sideDataPath));
