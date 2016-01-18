@@ -99,5 +99,15 @@ For "death":
 
 ####Question 7.
 
+For "waterloo":
+(waterloo, kitchener)	2.6149974
+(waterloo, napoleon)	1.9084398
+(waterloo, napoleonic)	1.786619
+
+For "toronto"
+(toronto, marlboros)	2.3539965
+(toronto, spadina)	2.3126037
+(toronto, leafs)	2.3108907
+
 
 
