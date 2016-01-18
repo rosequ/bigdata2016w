@@ -203,7 +203,7 @@ public class PairsPMI extends Configured implements Tool {
 				reader = new BufferedReader(inStream);
 
 			} catch (FileNotFoundException e) {
-				throw new IOException("Side data file not found");
+				throw new IOException("Side data file not found "+infile.toString());
 			}
 
 			String line;
