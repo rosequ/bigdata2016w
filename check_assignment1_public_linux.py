@@ -28,13 +28,21 @@ def check_a1(u):
     #        "ca.uwaterloo.cs.bigdata2016w."+u+".assignment1.StripesPMI",
     #        "-input", "data/Shakespeare.txt", 
     #        "-output", "cs489-2016w-"+u+"-a1-shakespeare-stripes", "-reducers", "5" ])
-    print("Question 4.")
+    print("Question 4. pairs")
     call("cat cs489-2016w-"+u+"-a1-shakespeare-pairs/part-r-0000* | wc",shell=True)
-    print("Question 5.")
+    print("Question 4. strips")
+    call("cat cs489-2016w-"+u+"-a1-shakespeare-stripes/part-r-0000* | wc",shell=True)
+    print("Question 5. pairs")
     call("cat cs489-2016w-"+u+"-a1-shakespeare-pairs/part-r-0000* | grep -v 'E-' | sort -k 3 -n -r | head",shell=True)
-    print("Question 6.")
+    print("Question 5. strips")
+    call("cat cs489-2016w-"+u+"-a1-shakespeare-stripes/part-r-0000* | grep -v 'E-' | sort -k 3 -n -r | head",shell=True)
+    print("Question 6. pairs")
     call("cat cs489-2016w-"+u+"-a1-shakespeare-pairs/part-r-0000* | grep '(tears,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
     call("cat cs489-2016w-"+u+"-a1-shakespeare-pairs/part-r-0000* | grep '(death,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
+
+    print("Question 6. stripes")
+    call("cat cs489-2016w-"+u+"-a1-shakespeare-stripes/part-r-0000* | grep '(tears,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
+    call("cat cs489-2016w-"+u+"-a1-shakespeare-stripes/part-r-0000* | grep '(death,' |  grep -v 'E-' | sort -k 3 -n -r | head -3",shell=True)
 
 if __name__ == "__main__":
   try:

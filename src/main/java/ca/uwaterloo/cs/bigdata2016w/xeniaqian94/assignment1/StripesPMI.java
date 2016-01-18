@@ -139,7 +139,6 @@ public class StripesPMI extends Configured implements Tool {
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
-			countLine += 1;
 			
 			Map<String, HMapStFW> stripes = new HashMap<String, HMapStFW>();
 
