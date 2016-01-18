@@ -216,6 +216,7 @@ public class PairsPMI extends Configured implements Tool {
 				} else
 					individualOccurance.put(parts[0], Float.parseFloat(parts[1]));
 			}
+			conf.set("lineNumberCount", String.valueOf(individualOccurance.get("lineNumberCount")));
 			reader.close();
 		}
 
@@ -361,6 +362,7 @@ public class PairsPMI extends Configured implements Tool {
 		LOG.info("Second Job Finished in " + (System.currentTimeMillis() - startTime2) / 1000.0 + " seconds");
 		LOG.info("Two Jobs together Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
 //		LOG.info("Mapreduce count file has lines " + countLine);
+		LOG.info("Mapreduce count file has lines " + conf.get("lineNumberCount"));
 
 		return 0;
 	}

@@ -53,7 +53,7 @@ import tl.lin.data.pair.PairOfStrings;
  */
 public class StripesPMI extends Configured implements Tool {
 	private static final Logger LOG = Logger.getLogger(StripesPMI.class);
-	private static int countLine = 0;
+//	private static int countLine = 0;
 
 	// Mapper: emits (token, 1) for every word occurrence per line
 	private static class FirstMapper extends Mapper<LongWritable, Text, Text, FloatWritable> {
@@ -64,7 +64,7 @@ public class StripesPMI extends Configured implements Tool {
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
-			countLine += 1;
+//			countLine += 1;
 //			LOG.info(countLine+" ");
 
 			StringTokenizer itr = new StringTokenizer(line);
@@ -90,6 +90,8 @@ public class StripesPMI extends Configured implements Tool {
 				context.write(WORD, ONE);
 
 			}
+			WORD.set("lineNumberCount");
+			context.write(WORD, ONE);
 		}
 	}
 
@@ -233,6 +235,7 @@ public class StripesPMI extends Configured implements Tool {
 				} else
 					individualOccurance.put(parts[0], Float.parseFloat(parts[1]));
 			}
+			conf.set("lineNumberCount", String.valueOf(individualOccurance.get("lineNumberCount")));
 			reader.close();
 		}
 
@@ -251,7 +254,7 @@ public class StripesPMI extends Configured implements Tool {
       for (String term : map.keySet()) {
       	if (map.get(term)>=10){
       		PAIR.set(key.toString(),term);
-      		SUM.set((float) Math.log10(map.get(term) * countLine
+      		SUM.set((float) Math.log10(map.get(term) * individualOccurance.get("lineNumberCount")
   						/ (individualOccurance.get(key.toString()) * individualOccurance.get(term))));    		
       		context.write(PAIR, SUM);
       	}
@@ -332,7 +335,6 @@ public class StripesPMI extends Configured implements Tool {
 		long startTime1 = System.currentTimeMillis();
 		job1.waitForCompletion(true);
 		LOG.info("First Job Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
-		LOG.info("Mapreduce count file has lines " + countLine);
 		
 		FileUtil.copyMerge(FileSystem.get(conf), new Path(sideDataPath+"/"), FileSystem.get(conf), new Path(sideDataPath+".txt"), false, getConf(), null);
 
@@ -375,7 +377,7 @@ public class StripesPMI extends Configured implements Tool {
 		job2.waitForCompletion(true);
 		LOG.info("Second Job Finished in " + (System.currentTimeMillis() - startTime2) / 1000.0 + " seconds");
 		LOG.info("Two Jobs together Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
-		LOG.info("Mapreduce count file has lines " + countLine);
+		LOG.info("Mapreduce count file has lines " + conf.get("lineNumberCount"));
 
 		return 0;
 	}
