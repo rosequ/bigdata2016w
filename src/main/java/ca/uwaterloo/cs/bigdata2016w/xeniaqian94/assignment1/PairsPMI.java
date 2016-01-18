@@ -50,7 +50,7 @@ import tl.lin.data.pair.PairOfStrings;
  */
 public class PairsPMI extends Configured implements Tool {
 	private static final Logger LOG = Logger.getLogger(PairsPMI.class);
-	private static int countLine = 0;
+//	private static int countLine = 0;
 
 	// Mapper: emits (token, 1) for every word occurrence per line
 	private static class FirstMapper extends Mapper<LongWritable, Text, Text, FloatWritable> {
@@ -61,7 +61,7 @@ public class PairsPMI extends Configured implements Tool {
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
-			countLine += 1;
+//			countLine += 1;
 //			LOG.info(countLine+" ");
 
 			StringTokenizer itr = new StringTokenizer(line);
@@ -229,11 +229,11 @@ public class PairsPMI extends Configured implements Tool {
 			}
 
 			if (sum >= 10) {
-				SUM.set((float) Math.log10(sum * countLine
+				SUM.set((float) Math.log10(sum * individualOccurance.get("lineNumberCount")
 						/ (individualOccurance.get(key.getLeftElement()) * individualOccurance.get(key.getRightElement()))));
 				context.write(key, SUM);
 			}
-			LOG.info("lineNumberCount = "+individualOccurance.get("lineNumberCount"));
+//			LOG.info("lineNumberCount = "+individualOccurance.get("lineNumberCount"));
 		}
 	}
 
