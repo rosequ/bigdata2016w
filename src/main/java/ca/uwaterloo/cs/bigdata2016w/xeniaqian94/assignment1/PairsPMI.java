@@ -191,7 +191,7 @@ public class PairsPMI extends Configured implements Tool {
 		public void setup(Context context) throws IOException{
 			Configuration conf=context.getConfiguration();
 			FileSystem fs=FileSystem.get(conf);
-			Path infile=new Path(conf.get("SideDataPath"));
+			Path infile=new Path(conf.get("sideDataPath")+".txt");
 			if (!fs.exists(infile)){
 				throw new IOException("File not found in "+infile.toString());
 			}
@@ -285,7 +285,7 @@ public class PairsPMI extends Configured implements Tool {
 		job1.setJobName(PairsPMI.class.getSimpleName());
 		job1.setJarByClass(PairsPMI.class);
 
-		job1.setNumReduceTasks(1);
+		job1.setNumReduceTasks(args.numReducers);
 
 		FileInputFormat.setInputPaths(job1, new Path(args.input));
 		FileOutputFormat.setOutputPath(job1, new Path(sideDataPath));
@@ -307,6 +307,9 @@ public class PairsPMI extends Configured implements Tool {
 		job1.waitForCompletion(true);
 		LOG.info("First Job Finished in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
 		LOG.info("Mapreduce count file has lines " + countLine);
+
+		Process p = Runtime.getRuntime().exec("hadoop fs -cat "+sideDataPath+"/part-r-0000* | awk '{print $1,$2;}' | sort > "+sideDataPath+".txt");
+
 
 		LOG.info("Tool: " + PairsPMI.class.getSimpleName() + " second job");
 		LOG.info(" - input path: " + args.input);
