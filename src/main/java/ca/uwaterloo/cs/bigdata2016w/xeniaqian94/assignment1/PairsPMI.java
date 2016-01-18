@@ -19,6 +19,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -132,7 +133,6 @@ public class PairsPMI extends Configured implements Tool {
 		private static final PairOfStrings PAIR = new PairOfStrings();
 		private static final FloatWritable ONE = new FloatWritable(1);
 
-
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
@@ -153,13 +153,12 @@ public class PairsPMI extends Configured implements Tool {
 
 			String[] words = new String[set.size()];
 			words = set.toArray(words);
-			
 
 			for (int i = 0; i < words.length; i++) {
 				for (int j = 0; j < words.length; j++) {
 					if (i == j)
 						continue;
-					PAIR.set(words[i],words[j]);
+					PAIR.set(words[i], words[j]);
 					context.write(PAIR, ONE);
 				}
 			}
@@ -185,51 +184,51 @@ public class PairsPMI extends Configured implements Tool {
 
 	private static class SecondReducer extends Reducer<PairOfStrings, FloatWritable, PairOfStrings, FloatWritable> {
 		private final static FloatWritable SUM = new FloatWritable();
-    private static Map<String,Float> individualOccurance=new HashMap<String,Float>();
-    
+		private static Map<String, Float> individualOccurance = new HashMap<String, Float>();
+
 		@Override
-		public void setup(Context context) throws IOException{
-			Configuration conf=context.getConfiguration();
-			FileSystem fs=FileSystem.get(conf);
-			Path infile=new Path("firstMapReduceJob2/part-r-00000");
-			if (!fs.exists(infile)){
-				throw new IOException("File not found in "+infile.toString());
+		public void setup(Context context) throws IOException {
+			Configuration conf = context.getConfiguration();
+			FileSystem fs = FileSystem.get(conf);
+			Path infile = new Path("firstMapReduceJob2/part-r-00000");
+			if (!fs.exists(infile)) {
+				throw new IOException("File not found in " + infile.toString());
 			}
-			
+
 			BufferedReader reader = null;
 			try {
 				FSDataInputStream inf = fs.open(infile);
-				InputStreamReader inStream = new InputStreamReader(inf,"UTF-8");
+				InputStreamReader inStream = new InputStreamReader(inf, "UTF-8");
 				reader = new BufferedReader(inStream);
 
 			} catch (FileNotFoundException e) {
-				throw new IOException("Side data file not found "+infile.toString());
+				throw new IOException("Side data file not found " + infile.toString());
 			}
 
 			String line;
 			while ((line = reader.readLine()) != null) {
-				 String[] parts = line.split(" ");
-				 if (parts.length!=2){
-					 System.out.println("This line has a wrong format: "+line);
-				 }
-				 else 
-					 individualOccurance.put(parts[0], Float.parseFloat(parts[1]));
-			 }
-			reader.close();	
+				String[] parts = line.split(" ");
+				if (parts.length != 2) {
+					System.out.println("This line has a wrong format: " + line);
+				} else
+					individualOccurance.put(parts[0], Float.parseFloat(parts[1]));
+			}
+			reader.close();
 		}
-		
+
 		@Override
 		public void reduce(PairOfStrings key, Iterable<FloatWritable> values, Context context)
 				throws IOException, InterruptedException {
 			Iterator<FloatWritable> iter = values.iterator();
-			int sum = 0; //N(x,y)
+			int sum = 0; // N(x,y)
 			while (iter.hasNext()) {
 				sum += iter.next().get();
 			}
 
 			if (sum >= 10) {
-				SUM.set((float)Math.log10(sum*countLine/(individualOccurance.get(key.getLeftElement())*individualOccurance.get(key.getRightElement()))));
-				context.write(key,SUM);
+				SUM.set((float) Math.log10(sum * countLine
+						/ (individualOccurance.get(key.getLeftElement()) * individualOccurance.get(key.getRightElement()))));
+				context.write(key, SUM);
 			}
 		}
 	}
@@ -308,8 +307,10 @@ public class PairsPMI extends Configured implements Tool {
 		LOG.info("First Job Finished in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
 		LOG.info("Mapreduce count file has lines " + countLine);
 
-		Process p = Runtime.getRuntime().exec("hadoop fs -cat "+sideDataPath+"/part-r-0000* | awk '{print $1,$2;}' | sort > "+sideDataPath+".txt");
-                p=Runtime.getRuntime().exec("hadoop fs -ls");
+//		Process p = Runtime.getRuntime().exec(
+//				"hadoop fs -cat " + sideDataPath + "/part-r-0000* | awk '{print $1,$2;}' | sort > " + sideDataPath + ".txt");
+//		p = Runtime.getRuntime().exec("hadoop fs -ls");
+		FileUtil.copyMerge(FileSystem.get(conf), new Path("firstMapReduceJob2/"), FileSystem.get(conf), new Path("copyMergeTest.txt"), false, getConf(), null);
 
 		LOG.info("Tool: " + PairsPMI.class.getSimpleName() + " second job");
 		LOG.info(" - input path: " + args.input);
