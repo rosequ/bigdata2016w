@@ -19,15 +19,15 @@ def convertusername(u):
 
 def check_a1(u):
     """Run assignment1 in linux environment"""
-    #call(["mvn","clean","package"])
-    #call([ "hadoop","jar","target/bigdata2016w-0.1.0-SNAPSHOT.jar",
-     #      "ca.uwaterloo.cs.bigdata2016w."+u+".assignment1.PairsPMI",
-      #     "-input", "data/Shakespeare.txt", 
-       #    "-output", "cs489-2016w-"+u+"-a1-shakespeare-pairs", "-reducers", "5" ])
-   # call([ "hadoop","jar","target/bigdata2016w-0.1.0-SNAPSHOT.jar",
-    #        "ca.uwaterloo.cs.bigdata2016w."+u+".assignment1.StripesPMI",
-     #       "-input", "data/Shakespeare.txt", 
-      #      "-output", "cs489-2016w-"+u+"-a1-shakespeare-stripes", "-reducers", "5" ])
+    call(["mvn","clean","package"])
+    call([ "hadoop","jar","target/bigdata2016w-0.1.0-SNAPSHOT.jar",
+          "ca.uwaterloo.cs.bigdata2016w."+u+".assignment1.PairsPMI",
+          "-input", "data/Shakespeare.txt", 
+          "-output", "cs489-2016w-"+u+"-a1-shakespeare-pairs", "-reducers", "5" ])
+    call([ "hadoop","jar","target/bigdata2016w-0.1.0-SNAPSHOT.jar",
+           "ca.uwaterloo.cs.bigdata2016w."+u+".assignment1.StripesPMI",
+           "-input", "data/Shakespeare.txt", 
+           "-output", "cs489-2016w-"+u+"-a1-shakespeare-stripes", "-reducers", "5" ])
     print("Question 4. pairs")
     call("cat cs489-2016w-"+u+"-a1-shakespeare-pairs/part-r-0000* | wc",shell=True)
     print("Question 4. strips")
