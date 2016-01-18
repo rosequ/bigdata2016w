@@ -43,16 +43,13 @@ import org.kohsuke.args4j.ParserProperties;
 
 import com.google.common.collect.Sets;
 
-import tl.lin.data.map.HMapStFW;
-import tl.lin.data.map.HMapStIW;
-import tl.lin.data.map.MapKF;
 import tl.lin.data.pair.PairOfStrings;
 
 /**
  * Simple word count demo.
  */
-public class StripesPMI extends Configured implements Tool {
-	private static final Logger LOG = Logger.getLogger(StripesPMI.class);
+public class lineCount extends Configured implements Tool {
+	private static final Logger LOG = Logger.getLogger(lineCount.class);
 	private static int countLine = 0;
 
 	// Mapper: emits (token, 1) for every word occurrence per line
@@ -65,7 +62,7 @@ public class StripesPMI extends Configured implements Tool {
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
 			countLine += 1;
-//			LOG.info(countLine+" ");
+			LOG.info(countLine+" ");
 
 			StringTokenizer itr = new StringTokenizer(line);
 
@@ -133,79 +130,43 @@ public class StripesPMI extends Configured implements Tool {
 		}
 	}
 
-	private static class SecondMapper extends Mapper<LongWritable, Text, Text, HMapStFW> {
-		
-    private static final Text TEXT = new Text();
+	private static class SecondMapper extends Mapper<LongWritable, Text, Text, FloatWritable> {
+		private static final PairOfStrings PAIR = new PairOfStrings();
+		private static final FloatWritable ONE = new FloatWritable(1);
 
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
-			
-			Map<String, HMapStFW> stripes = new HashMap<String, HMapStFW>();
 
-			StringTokenizer itr = new StringTokenizer(line);
-			int cnt = 0;
-			Set<String> set = new HashSet<String>();
-			while (itr.hasMoreTokens()) {
-				cnt++;
-				String w = itr.nextToken().toLowerCase().replaceAll("(^[^a-z]+|[^a-z]+$)", "");
-				if (w.length() == 0)
-					continue;
-				set.add(w);
-				if (cnt >= 100)
-					break;
-			}
 
-			String[] words = new String[set.size()];
-			words = set.toArray(words);
-			
-			for (int i = 0; i < words.length; i++) {
-				for (int j = 0; j < words.length; j++) {
-					if (i == j)
-						continue;
-					String prev = words[i];
-	        String cur = words[j];
-	        
-	        if (stripes.containsKey(prev)) {
-	          HMapStFW stripe = stripes.get(prev);
-	          stripe.put(cur, 1.0f);
-	        } else {
-	          HMapStFW stripe = new HMapStFW();
-	          stripe.put(cur, 1.0f);
-	          stripes.put(prev, stripe);
-	        }
+					PAIR.set(words[i], words[j]);
+					context.write(PAIR, ONE);
 				}
 			}
-			
-      for (String t : stripes.keySet()) {
-        TEXT.set(t);
-        context.write(TEXT, stripes.get(t));
-      }
 		}
 	}
 
-	private static class SecondCombiner extends Reducer<Text, HMapStFW, Text, HMapStFW> {
+	private static class SecondCombiner extends Reducer<PairOfStrings, FloatWritable, PairOfStrings, FloatWritable> {
+		private final static FloatWritable SUM = new FloatWritable();
 
 		@Override
-		public void reduce(Text key, Iterable<HMapStFW> values, Context context)
+		public void reduce(PairOfStrings key, Iterable<FloatWritable> values, Context context)
 				throws IOException, InterruptedException {
-      Iterator<HMapStFW> iter = values.iterator();
-      HMapStFW map = new HMapStFW();
+			Iterator<FloatWritable> iter = values.iterator();
+			int sum = 0;
+			while (iter.hasNext()) {
+				sum += iter.next().get();
+			}
 
-      while (iter.hasNext()) {
-        map.plus(iter.next());
-      }
-
-      context.write(key, map);
+			SUM.set(sum);
+			context.write(key, SUM);
 		}
 	}
 
-	private static class SecondReducer extends Reducer<Text, HMapStFW, PairOfStrings, FloatWritable> {
+	private static class SecondReducer extends Reducer<PairOfStrings, FloatWritable, PairOfStrings, FloatWritable> {
+		private final static FloatWritable SUM = new FloatWritable();
 		private static Map<String, Float> individualOccurance = new HashMap<String, Float>();
 
-		private static final PairOfStrings PAIR = new PairOfStrings();
-		private static final FloatWritable SUM = new FloatWritable(1);
-		
 		@Override
 		public void setup(Context context) throws IOException {
 			Configuration conf = context.getConfiguration();
@@ -237,33 +198,33 @@ public class StripesPMI extends Configured implements Tool {
 		}
 
 		@Override
-		public void reduce(Text key, Iterable<HMapStFW> values, Context context)
+		public void reduce(PairOfStrings key, Iterable<FloatWritable> values, Context context)
 				throws IOException, InterruptedException {
-			
-			Iterator<HMapStFW> iter = values.iterator();
-			
-      HMapStFW map = new HMapStFW();
-      HMapStFW map_final = new HMapStFW();
-      while (iter.hasNext()) {
-        map.plus(iter.next());
-      }
+			Iterator<FloatWritable> iter = values.iterator();
+			int sum = 0; // N(x,y)
+			while (iter.hasNext()) {
+				sum += iter.next().get();
+			}
 
-      for (String term : map.keySet()) {
-      	if (map.get(term)>=10){
-      		PAIR.set(key.toString(),term);
-      		SUM.set((float) Math.log10(map.get(term) * countLine
-  						/ (individualOccurance.get(key.toString()) * individualOccurance.get(term))));    		
-      		context.write(PAIR, SUM);
-      	}
-      }
+			if (sum >= 10) {
+				SUM.set((float) Math.log10(sum * countLine
+						/ (individualOccurance.get(key.getLeftElement()) * individualOccurance.get(key.getRightElement()))));
+				context.write(key, SUM);
+			}
 		}
 	}
 
+	protected static class SecondPartitioner extends Partitioner<PairOfStrings, FloatWritable> {
+		@Override
+		public int getPartition(PairOfStrings key, FloatWritable value, int numReduceTasks) {
+			return (key.getLeftElement().hashCode() & Integer.MAX_VALUE) % numReduceTasks;
+		}
+	}
 
 	/**
 	 * Creates an instance of this tool.
 	 */
-	public StripesPMI() {
+	public lineCount() {
 	}
 
 	public static class Args {
@@ -293,7 +254,7 @@ public class StripesPMI extends Configured implements Tool {
 			return -1;
 		}
 
-		LOG.info("Tool: " + StripesPMI.class.getSimpleName() + " first job");
+		LOG.info("Tool: " + lineCount.class.getSimpleName() + " first job");
 		LOG.info(" - input path: " + args.input);
 		LOG.info(" - output path: " + sideDataPath);
 		LOG.info(" - number of reducers: " + args.numReducers);
@@ -301,13 +262,13 @@ public class StripesPMI extends Configured implements Tool {
 		Configuration conf = getConf();
 		conf.set("sideDataPath", sideDataPath);
 		Job job1 = Job.getInstance(conf);
-		job1.setJobName(StripesPMI.class.getSimpleName());
-		job1.setJarByClass(StripesPMI.class);
+		job1.setJobName(lineCount.class.getSimpleName());
+		job1.setJarByClass(lineCount.class);
 
 		job1.setNumReduceTasks(args.numReducers);
 
 		FileInputFormat.setInputPaths(job1, new Path(args.input));
-		FileOutputFormat.setOutputPath(job1, new Path(sideDataPath));
+		FileOutputFormat.setOutputPath(job1, new Path(args.output));
 
 		job1.setMapOutputKeyClass(Text.class);
 		job1.setMapOutputValueClass(FloatWritable.class);
@@ -319,11 +280,11 @@ public class StripesPMI extends Configured implements Tool {
 		job1.setCombinerClass(FirstCombiner.class);
 		job1.setReducerClass(FirstReducer.class);
 		
-		job1.getConfiguration().setInt("mapred.max.split.size", 1024 * 1024 * 64);
-		job1.getConfiguration().set("mapreduce.map.memory.mb", "3072");
-		job1.getConfiguration().set("mapreduce.map.java.opts", "-Xmx3072m");
-		job1.getConfiguration().set("mapreduce.reduce.memory.mb", "3072");
-		job1.getConfiguration().set("mapreduce.reduce.java.opts", "-Xmx3072m");
+//		job1.getConfiguration().setInt("mapred.max.split.size", 1024 * 1024 * 64);
+//		job1.getConfiguration().set("mapreduce.map.memory.mb", "3072");
+//		job1.getConfiguration().set("mapreduce.map.java.opts", "-Xmx3072m");
+//		job1.getConfiguration().set("mapreduce.reduce.memory.mb", "3072");
+//		job1.getConfiguration().set("mapreduce.reduce.java.opts", "-Xmx3072m");
 
 		// Delete the output directory if it exists already.
 		FileSystem.get(conf).delete(new Path(sideDataPath), true);
@@ -332,50 +293,10 @@ public class StripesPMI extends Configured implements Tool {
 		long startTime1 = System.currentTimeMillis();
 		job1.waitForCompletion(true);
 		LOG.info("First Job Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
-		LOG.info("Mapreduce count file has lines " + countLine);
-		
-		FileUtil.copyMerge(FileSystem.get(conf), new Path(sideDataPath+"/"), FileSystem.get(conf), new Path(sideDataPath+".txt"), false, getConf(), null);
+//		LOG.info("Mapreduce count file has lines " + countLine);
 
-		LOG.info("Tool: " + StripesPMI.class.getSimpleName() + " second job");
-		LOG.info(" - input path: " + args.input);
-		LOG.info(" - output path: " + args.output);
-		LOG.info(" - number of reducers: " + args.numReducers);
 
 		conf = getConf();
-		Job job2 = Job.getInstance(conf);
-		job2.setJobName(StripesPMI.class.getSimpleName());
-		job2.setJarByClass(StripesPMI.class);
-
-		job2.setNumReduceTasks(args.numReducers);
-
-		FileInputFormat.setInputPaths(job2, new Path(args.input));
-		FileOutputFormat.setOutputPath(job2, new Path(args.output));
-
-		job2.setMapOutputKeyClass(Text.class);
-		job2.setMapOutputValueClass(HMapStFW.class);
-		job2.setOutputKeyClass(PairOfStrings.class);
-		job2.setOutputValueClass(FloatWritable.class);
-		job2.setOutputFormatClass(TextOutputFormat.class);
-
-		job2.setMapperClass(SecondMapper.class);
-		job2.setCombinerClass(SecondCombiner.class);
-		job2.setReducerClass(SecondReducer.class);
-		
-		job2.getConfiguration().setInt("mapred.max.split.size", 1024 * 1024 * 64);
-		job2.getConfiguration().set("mapreduce.map.memory.mb", "3072");
-		job2.getConfiguration().set("mapreduce.map.java.opts", "-Xmx3072m");
-		job2.getConfiguration().set("mapreduce.reduce.memory.mb", "3072");
-		job2.getConfiguration().set("mapreduce.reduce.java.opts", "-Xmx3072m");
-
-		// Delete the output directory if it exists already.
-		Path outputDir = new Path(args.output);
-		FileSystem.get(conf).delete(outputDir, true);
-
-		long startTime2 = System.currentTimeMillis();
-		job2.waitForCompletion(true);
-		LOG.info("Second Job Finished in " + (System.currentTimeMillis() - startTime2) / 1000.0 + " seconds");
-		LOG.info("Two Jobs together Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
-		LOG.info("Mapreduce count file has lines " + countLine);
 
 		return 0;
 	}
@@ -384,6 +305,7 @@ public class StripesPMI extends Configured implements Tool {
 	 * Dispatches command-line arguments to the tool via the {@code ToolRunner}.
 	 */
 	public static void main(String[] args) throws Exception {
-		ToolRunner.run(new StripesPMI(), args);
+		ToolRunner.run(new lineCount(), args);
 	}
 }
+

@@ -62,7 +62,7 @@ public class PairsPMI extends Configured implements Tool {
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = ((Text) value).toString();
 			countLine += 1;
-			LOG.info(countLine+" ");
+//			LOG.info(countLine+" ");
 
 			StringTokenizer itr = new StringTokenizer(line);
 
@@ -87,6 +87,8 @@ public class PairsPMI extends Configured implements Tool {
 				context.write(WORD, ONE);
 
 			}
+			WORD.set("lineNumberCount");
+			context.write(WORD, ONE);
 		}
 	}
 
@@ -231,6 +233,7 @@ public class PairsPMI extends Configured implements Tool {
 						/ (individualOccurance.get(key.getLeftElement()) * individualOccurance.get(key.getRightElement()))));
 				context.write(key, SUM);
 			}
+			LOG.info("lineNumberCount = "+individualOccurance.get("lineNumberCount"));
 		}
 	}
 
