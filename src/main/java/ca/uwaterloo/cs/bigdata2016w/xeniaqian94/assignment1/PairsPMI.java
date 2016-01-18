@@ -276,7 +276,7 @@ public class PairsPMI extends Configured implements Tool {
 
 		LOG.info("Tool: " + PairsPMI.class.getSimpleName() + " first job");
 		LOG.info(" - input path: " + args.input);
-		LOG.info(" - output path: " + args.output);
+		LOG.info(" - output path: " + sideDataPath);
 		LOG.info(" - number of reducers: " + args.numReducers);
 
 		Configuration conf = getConf();
@@ -323,7 +323,7 @@ public class PairsPMI extends Configured implements Tool {
 		FileInputFormat.setInputPaths(job2, new Path(args.input));
 		FileOutputFormat.setOutputPath(job2, new Path(args.output));
 
-		job2.setMapOutputKeyClass(Text.class);
+		job2.setMapOutputKeyClass(PairOfStrings.class);
 		job2.setMapOutputValueClass(FloatWritable.class);
 		job2.setOutputKeyClass(Text.class);
 		job2.setOutputValueClass(FloatWritable.class);
