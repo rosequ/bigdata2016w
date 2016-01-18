@@ -201,7 +201,6 @@ public class StripesPMI extends Configured implements Tool {
 	}
 
 	private static class SecondReducer extends Reducer<Text, HMapStFW, Text, HMapStFW> {
-		private final static FloatWritable SUM = new FloatWritable();
 		private static Map<String, Float> individualOccurance = new HashMap<String, Float>();
 
 		@Override
@@ -246,6 +245,7 @@ public class StripesPMI extends Configured implements Tool {
       }
 
       for (String term : map.keySet()) {
+      	System.out.println(map.get(term)+" "+term);
       	if (map.get(term)>=10)
       		map_final.put(term, (float) Math.log10(map.get(term) * countLine
   						/ (individualOccurance.get(key) * individualOccurance.get(term))));    				
@@ -322,7 +322,6 @@ public class StripesPMI extends Configured implements Tool {
 		job1.waitForCompletion(true);
 		LOG.info("First Job Finished in " + (System.currentTimeMillis() - startTime1) / 1000.0 + " seconds");
 		LOG.info("Mapreduce count file has lines " + countLine);
-
 		
 		FileUtil.copyMerge(FileSystem.get(conf), new Path(sideDataPath+"/"), FileSystem.get(conf), new Path(sideDataPath+".txt"), false, getConf(), null);
 
