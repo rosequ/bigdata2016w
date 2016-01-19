@@ -90,8 +90,10 @@ public class StripesPMI extends Configured implements Tool {
 				context.write(WORD, ONE);
 
 			}
-			WORD.set("lineNumberCount");
-			context.write(WORD, ONE);
+			if (words.length!=0){
+				WORD.set("lineNumberCount");
+				context.write(WORD, ONE);
+			}
 		}
 	}
 
