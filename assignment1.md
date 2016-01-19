@@ -30,7 +30,7 @@ Input key-value pair is <Text, HMapStFW>. One important note is that to validate
 ####Question 2.
 ran on <code>linux.student.cs.uwaterloo.ca</code>
 
-complete pairs implementation: 55.148 seconds
+complete pairs implementation: 55.148 seconds 
 
 complete stripes implementation: 24.051 seconds
 
@@ -50,27 +50,30 @@ complete stripes implementation: 29.072 seconds
 
 The pair is "maine" and "anjou". 
 
-Following is the check script's output, as a reference:
+NOTE: based on Piazza, Jimmy's answer, we IGNORE lines with zero word in line count https://piazza.com/class/ii64c6llmtx1xf?cid=109
 
-(maine, anjou)	3.6331422
+Following is the check script's output, as a reference: 
 
-(anjou, maine)	3.6331422
+(maine, anjou)	3.5971177
 
-(milford, haven)	3.6201773
+(anjou, maine)	3.5971177
 
-(haven, milford)	3.6201773
+(milford, haven)	3.5841527
 
-(cleopatra's, alexandria)	3.5387795
+(haven, milford)	3.5841527
 
-(alexandria, cleopatra's)	3.5387795
+(cleopatra's, alexandria)	3.5027547
 
-(rosencrantz, guildenstern)	3.5383153
+(alexandria, cleopatra's)	3.5027547
 
-(guildenstern, rosencrantz)	3.5383153
+(rosencrantz, guildenstern)	3.5022905
 
-(personae, dramatis)	3.5316846
+(guildenstern, rosencrantz)	3.5022905
 
-(dramatis, personae)	3.5316846
+(personae, dramatis)	3.4956598
+
+(dramatis, personae)	3.4956598
+
 
 #####Why such high PMI:
 
@@ -82,32 +85,33 @@ These terms are also not that common pairs such as "a the". N(x,y), N(x), N(y) a
 
 For "tears":
 
-(tears, shed)	2.1117902
+(tears, shed)	2.0757654
 
-(tears, salt)	2.052812
+(tears, salt)	2.0167875
 
-(tears, eyes)	1.165167
+(tears, eyes)	1.1291423
 
 For "death":
 
-(death, father's)	1.120252
+(death, father's)	1.0842273
 
-(death, die)	0.7541594
+(death, die)	0.7181347
 
-(death, life)	0.7381346
+(death, life)	0.7021099
 
 
 ####Question 7.
 
 For "waterloo":
-(waterloo, kitchener)	2.6149974
-(waterloo, napoleon)	1.9084398
-(waterloo, napoleonic)	1.786619
+(waterloo, kitchener)	2.6149967
+(waterloo, napoleon)	1.908439
+(waterloo, napoleonic)	1.7866182
 
 For "toronto"
-(toronto, marlboros)	2.3539965
-(toronto, spadina)	2.3126037
-(toronto, leafs)	2.3108907
+(toronto, marlboros)	2.3539958
+(toronto, spadina)	2.312603
+(toronto, leafs)	2.3108897
+
 
 
 
