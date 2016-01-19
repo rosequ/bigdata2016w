@@ -103,6 +103,7 @@ For "death":
 ####Question 7.
 
 For "waterloo":
+
 (waterloo, kitchener)	2.6149967
 
 (waterloo, napoleon)	1.908439
@@ -110,7 +111,8 @@ For "waterloo":
 (waterloo, napoleonic)	1.7866182
 
 
-For "toronto"
+For "toronto":
+
 (toronto, marlboros)	2.3539958
 
 (toronto, spadina)	2.312603
