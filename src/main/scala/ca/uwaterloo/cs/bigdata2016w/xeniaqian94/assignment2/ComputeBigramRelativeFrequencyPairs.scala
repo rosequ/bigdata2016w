@@ -58,7 +58,10 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
         var freq=List[((String,String),Double)]()
         while (iter.hasNext){
           val x=iter.next;
-          if (x._1._2=="*") marginal=x._2 else freq.::((x._1,(1.0*x._2/marginal)))
+          if (x._1._2=="*") 
+            marginal=x._2 
+          else 
+            freq.::(x._1,(1.0*x._2/marginal))
         }
         freq.iterator
       })
