@@ -8,12 +8,20 @@ import org.apache.hadoop.fs._
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 import org.rogach.scallop._
+import org.apache.spark.Partitioner
+
 
 class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   mainOptions = Seq(input, output, reducers)
   val input = opt[String](descr = "input path", required = true)
   val output = opt[String](descr = "output path", required = true)
   val reducers = opt[Int](descr = "number of reducers", required = false, default = Some(1))
+}
+class MyPartitioner(numOfPar: Int) extends Partitioner {
+  def numPartitions: Int = numOfPar
+  def getPartition(key:(String,String)): Int = {
+    ((key._2.hashCode() & Integer.MAX_VALUE) % numPartitions)
+  }
 }
 
 object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
@@ -33,7 +41,7 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
     FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
     //TO DO
-    val textFile = sc.textFile(args.input())
+    val textFile = sc.textFile(args.input(),args.reducers())
     val counts = textFile
       .flatMap(line => {
         val tokens = tokenize(line)
@@ -41,12 +49,18 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
       })
       .map(bigram => (bigram, 1))
       .reduceByKey(_ + _)
-      .groupBy{x=>x._1._1}
-      .flatMap(i=>{
-        val margin=i._2.maxBy{x=>x._1._2}
-        i._2.map(x=>(x._1,1.0*x._2/margin._2))       
-      })
-      .filter(i=>(i._1._2!="*"))
+      .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
+//      .mapPartitions(iter=>{
+//        val margin=new HashMap[String,Int]
+//        while (iter.hasNext)
+//        
+//      })
+//      .groupBy{x=>x._1._1}
+//      .flatMap(i=>{
+//        val margin=i._2.maxBy{x=>x._2}
+//        i._2.map(x=>(x._1,(1.0*x._2)/margin._2))       
+//      })
+//      .filter(i=>(i._1._2!="*"))
     
     counts.saveAsTextFile(args.output())
   }
