@@ -21,7 +21,7 @@ class MyPartitioner(numOfPar: Int) extends Partitioner {
   def numPartitions: Int = numOfPar
   def getPartition(key:Any): Int = {
     val k=key.asInstanceOf[(String,String)]
-    ((k._2.hashCode() & Integer.MAX_VALUE) % numPartitions)
+    ((k._1.hashCode() & Integer.MAX_VALUE) % numPartitions)
   }
 }
 
