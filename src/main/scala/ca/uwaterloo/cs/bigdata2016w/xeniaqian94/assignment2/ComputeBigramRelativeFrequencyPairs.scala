@@ -62,7 +62,8 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
         }
         freq.iterator
       })
-      .sortByKey()
+//      .collect
+//      .sortByKey()
 //      .groupBy{x=>x._1._1}
 //      .flatMap(i=>{
 //        val margin=i._2.maxBy{x=>x._2}
