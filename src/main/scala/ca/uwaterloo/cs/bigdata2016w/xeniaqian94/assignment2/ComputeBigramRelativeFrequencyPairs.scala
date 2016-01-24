@@ -41,11 +41,10 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
       })
       .map(bigram => (bigram, 1))
       .reduceByKey(_ + _)
-
       .groupBy{x=>x._1._1}
       .flatMap(i=>{
         val margin=i._2.maxBy{x=>x._1._2}
-        i._2.map(x=>(x._1,x._2/margin._2))       
+        i._2.map(x=>(x._1,1.0*x._2/margin._2))       
       })
     
     counts.saveAsTextFile(args.output())
