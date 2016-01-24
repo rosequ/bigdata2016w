@@ -19,8 +19,9 @@ class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
 }
 class MyPartitioner(numOfPar: Int) extends Partitioner {
   def numPartitions: Int = numOfPar
-  def getPartition(key:(String,String)): Int = {
-    ((key._2.hashCode() & Integer.MAX_VALUE) % numPartitions)
+  def getPartition(key:Any): Int = {
+    val k=key.asInstanceOf[(String,String)]
+    ((k._2.hashCode() & Integer.MAX_VALUE) % numPartitions)
   }
 }
 
