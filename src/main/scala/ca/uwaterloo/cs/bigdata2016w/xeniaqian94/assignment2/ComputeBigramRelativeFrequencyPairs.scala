@@ -64,7 +64,8 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
             marginal=x._2 
             log.info("In here *")}
           else{
-            freq.::(x._1,(1.0*x._2/marginal))
+            val a=(x._1,(1.0*x._2/marginal))
+            freq=freq.::(a)
             log.info("Freq.length="+freq.length)}
             
         }
