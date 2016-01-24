@@ -46,6 +46,7 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
         val margin=i._2.maxBy{x=>x._1._2}
         i._2.map(x=>(x._1,1.0*x._2/margin._2))       
       })
+      .filter(i=>(i._1._2!="*"))
     
     counts.saveAsTextFile(args.output())
   }
