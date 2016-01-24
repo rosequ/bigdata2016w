@@ -64,8 +64,11 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
             marginal=x._2 
           else 
             freq.::(x._1,(1.0*x._2/marginal))
+            
         }
+        log.info("Freq.length="+freq.length)
         freq.toIterator
+       
       })
 //      .collect
 //      .sortByKey()
