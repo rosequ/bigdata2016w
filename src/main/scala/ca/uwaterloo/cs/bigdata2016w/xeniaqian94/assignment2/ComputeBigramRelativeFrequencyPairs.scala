@@ -59,11 +59,13 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
         while (iter.hasNext){
           
           val x=iter.next;
-          log.info("Enter iter.hasNext "+x._1._1+" "+x._1._2+" "+x._2)
-          if (x._1._2=="*") 
+          log.info("Enter iter.hasNext "+x._1._1+" "+x._1._2+" "+x._2+" "+x._1._2.equals("*"))
+          if (x._1._2.equals("*")){
             marginal=x._2 
-          else 
+            log.info("In here *")}
+          else{
             freq.::(x._1,(1.0*x._2/marginal))
+            log.info("Freq.length="+freq.length)}
             
         }
         log.info("Freq.length="+freq.length)
