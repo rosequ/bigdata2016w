@@ -57,30 +57,16 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
         var marginal=1
         var freq=List[((String,String),Double)]()
         while (iter.hasNext){
-          
           val x=iter.next;
-          log.info("Enter iter.hasNext "+x._1._1+" "+x._1._2+" "+x._2+" "+x._1._2.equals("*"))
-          if (x._1._2.equals("*")){
+          if (x._1._2.equals("*"))
             marginal=x._2 
-            log.info("In here *")}
-          else{
-            val a=(x._1,(1.0*x._2/marginal))
-            freq=freq.::(a)
-            log.info("Freq.length="+freq.length)}
-            
+          else
+            freq=freq.::((x._1,(1.0*x._2/marginal)))
         }
         log.info("Freq.length="+freq.length)
         freq.toIterator
-       
       })
-//      .collect
-//      .sortByKey()
-//      .groupBy{x=>x._1._1}
-//      .flatMap(i=>{
-//        val margin=i._2.maxBy{x=>x._2}
-//        i._2.map(x=>(x._1,(1.0*x._2)/margin._2))       
-//      })
-//      .filter(i=>(i._1._2!="*"))
+      .sortByKey()
     
     counts.saveAsTextFile(args.output())
   }
