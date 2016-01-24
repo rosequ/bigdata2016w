@@ -25,8 +25,10 @@ class MyPartitioner(numOfPar: Int) extends Partitioner {
   }
 }
 
+
 object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
   val log = Logger.getLogger(getClass().getName())
+ 
 
   def main(argv: Array[String]) {
     val args = new Conf(argv)
@@ -51,11 +53,16 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
       .map(bigram => (bigram, 1))
       .reduceByKey(_ + _)
       .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
-//      .mapPartitions(iter=>{
-//        val margin=new HashMap[String,Int]
-//        while (iter.hasNext)
-//        
-//      })
+      .mapPartitions(iter=>{
+        var marginal=1
+        var freq=List[((String,String),Double)]()
+        while (iter.hasNext){
+          val x=iter.next;
+          if (x._1._2=="*") marginal=x._2 else freq.::((x._1,(1.0*x._2/marginal)))
+        }
+        freq.iterator
+      })
+      .sortByKey()
 //      .groupBy{x=>x._1._1}
 //      .flatMap(i=>{
 //        val margin=i._2.maxBy{x=>x._2}
