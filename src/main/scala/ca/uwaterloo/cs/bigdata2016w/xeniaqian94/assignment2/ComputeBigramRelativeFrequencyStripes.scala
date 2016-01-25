@@ -53,21 +53,11 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
         stripes.toList
       })
       .reduceByKey((a,b)=>a++(for((k,v)<- b) yield (k->(v+(if(a.contains(k)) a(k) else 0)))))
-//      .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
-//      .mapPartitions(iter=>{
-//        var marginal=1
-//        var freq=List[((String,String),Double)]()
-//        while (iter.hasNext){
-//          val x=iter.next;
-//          if (x._1._2.equals("*"))
-//            marginal=x._2 
-//          else
-//            freq=freq.::((x._1,(1.0*x._2/marginal)))
-//        }
-//        log.info("Freq.length="+freq.length)
-//        freq.toIterator
-//      })
-//      .sortByKey()
+      .flatMap(a=>{       
+        var marginal=a._2.values.sum
+        for((k,v)<- a._2) yield (k->(1.0*v/marginal))       
+      })
+      .sortByKey()
     
     counts.saveAsTextFile(args.output())
   }
