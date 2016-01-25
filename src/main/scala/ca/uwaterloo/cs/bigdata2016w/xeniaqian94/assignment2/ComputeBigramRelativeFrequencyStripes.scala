@@ -37,12 +37,19 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
            val pairList=tokens.sliding(2).toIterator
            while(pairList.hasNext){           
              val p=pairList.next();
-             var stripe = if (stripes.contains(p(0))) stripes(p(0)) else new HashMap[String,Int]();
-             if (stripe.contains(p(1))) stripe+=(p(1) -> (stripe(p(1)+1))) else stripe+=(p(1) -> 1);
-             stripes+=(p(0) -> stripe);
+             if(stripes.contains(p(0))){
+               var stripe = stripes(p(0))
+               if (stripe.contains(p(1))) stripe+=(p(1) -> (stripe(p(1)+1))) else stripe+=(p(1) -> 1)
+               stripes+=(p(0) -> stripe)
+               
+             }
+             else{
+               var stripe=new HashMap[String,Int]()
+               stripe+=(p(1) -> 1)
+               stripes+=(p(0) -> stripe)
+             }
            }    
         }
-        else()
         stripes.toList
       })
          
