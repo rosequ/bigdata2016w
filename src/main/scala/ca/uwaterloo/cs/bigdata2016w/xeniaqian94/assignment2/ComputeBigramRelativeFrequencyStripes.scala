@@ -53,7 +53,7 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
         stripes.toList
       })
       .reduceByKey((a,b)=>a++(for((k,v)<- b) yield (k->(v+(if(a.contains(k)) a(k) else 0)))))
-      .flatMap(a=>{       
+      .map(a=>{       
         var marginal=a._2.values.sum
         var iter=a._2.toIterator
         val freq=new HashMap[String,Double]()
@@ -61,7 +61,7 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
           val x=iter.next()
           freq+=(x._1 -> (1.0*x._2/marginal))  
         }
-        freq.toList
+        (a._1,freq.toList)
       })
       .sortByKey()
     counts.saveAsTextFile(args.output())
