@@ -63,7 +63,7 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
         }
         (a._1,freq.toList)
       })
-      .sortByKey()
+//      .sortByKey()
     counts.saveAsTextFile(args.output())
   }
 }
