@@ -55,10 +55,15 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
       .reduceByKey((a,b)=>a++(for((k,v)<- b) yield (k->(v+(if(a.contains(k)) a(k) else 0)))))
       .flatMap(a=>{       
         var marginal=a._2.values.sum
-        for((k,v)<- a._2) yield (k->(1.0*v/marginal))       
+        var iter=a._2.toIterator
+        val freq=new HashMap[String,Double]()
+        while(iter.hasNext){
+          val x=iter.next()
+          freq+=(x._1 -> (1.0*x._2/marginal))  
+        }
+        freq.toList
       })
       .sortByKey()
-    
     counts.saveAsTextFile(args.output())
   }
 }
