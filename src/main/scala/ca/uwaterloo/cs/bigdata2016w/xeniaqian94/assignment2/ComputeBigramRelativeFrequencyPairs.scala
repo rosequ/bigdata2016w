@@ -65,9 +65,7 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
         }
         log.info("Freq.length="+freq.length)
         freq.toIterator
-      })
-//      .sortByKey()
-    
-    counts.saveAsTextFile(args.output())
+      })  //      .sortByKey()
+      .saveAsTextFile(args.output())
   }
 }

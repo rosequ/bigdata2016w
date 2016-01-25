@@ -62,8 +62,7 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
           freq+=(x._1 -> (1.0*x._2/marginal))  
         }
         (a._1,freq.toList)
-      })
-//      .sortByKey()
-    counts.saveAsTextFile(args.output())
+      })//      .sortByKey()
+      .saveAsTextFile(args.output())
   }
 }
