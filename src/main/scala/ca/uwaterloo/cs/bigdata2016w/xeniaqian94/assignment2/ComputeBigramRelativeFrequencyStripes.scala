@@ -56,10 +56,10 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
       .map(a=>{       
         var marginal=a._2.values.sum
         var iter=a._2.toIterator
-        val freq=new HashMap[String,Double]()
+        val freq=new HashMap[String,Float]()
         while(iter.hasNext){
           val x=iter.next()
-          freq+=(x._1 -> (1.0*x._2/marginal))  
+          freq+=(x._1 -> (1.0f*x._2/marginal))  
         }
         (a._1,freq.toList)
       })//      .sortByKey()

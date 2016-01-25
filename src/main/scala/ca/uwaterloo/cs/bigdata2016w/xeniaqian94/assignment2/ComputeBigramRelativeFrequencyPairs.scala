@@ -55,17 +55,19 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
       .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
       .mapPartitions(iter=>{
         var marginal=1
-        var freq=List[((String,String),Double)]()
+        var freq=List[((String,String),Float)]()
         while (iter.hasNext){
           val x=iter.next;
           if (x._1._2.equals("*"))
             marginal=x._2 
           else
-            freq=freq.::((x._1,(1.0*x._2/marginal)))
+            freq=freq.::((x._1,(1.0f*x._2/marginal)))
         }
         log.info("Freq.length="+freq.length)
         freq.toIterator
-      })  //      .sortByKey()
+      })
+      .cache//      .sortByKey()
       .saveAsTextFile(args.output())
+      
   }
 }
