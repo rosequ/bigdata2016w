@@ -52,9 +52,7 @@ object ComputeBigramRelativeFrequencyStripes extends Tokenizer {
         }
         stripes.toList
       })
-         
-//      .map(bigram => (bigram, 1))
-//      .reduceByKey(_ + _)
+      .reduceByKey((a,b)=>a++(for((k,v)<- b) yield (k->(v+(if(a.contains(k)) a(k) else 0)))))
 //      .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
 //      .mapPartitions(iter=>{
 //        var marginal=1
