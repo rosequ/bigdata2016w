@@ -106,7 +106,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 			String thisTerm = key.getKey().toString();
 			thisDocno = key.getValue();
 
-			if (!thisTerm.equals(currentTerm)) { //previous term write its postings
+			if (!thisTerm.equals(currentTerm)&&(currentTerm!=null)) { //previous term write its postings
 				TERM.set(currentTerm);
 				outStream.flush();
 				partialPostings.flush();
