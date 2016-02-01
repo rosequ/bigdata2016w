@@ -39,7 +39,8 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 		Path pt = new Path(indexPath);
 		ContentSummary cs = fs.getContentSummary(pt);
 		long fileCount = cs.getFileCount();
-		System.out.println("Total file count!!!!! \t" + fileCount);
+		System.out.println("Total file count is \t" + fileCount);
+		int numReduceTasks=(int) (fileCount-1);
 		index = new MapFile.Reader(new Path(indexPath + "/part-r-00000"), fs.getConf());
 		
 		collection = fs.open(new Path(collectionPath));

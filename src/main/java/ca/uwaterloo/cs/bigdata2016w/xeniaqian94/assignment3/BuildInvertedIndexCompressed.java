@@ -122,7 +122,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 				df = 0;
 				partialPostings.reset();
 			}
-			currentTerm=thisTerm;
+			currentTerm=key.getKey().toString();
 			Iterator<IntWritable> iter = values.iterator(); //current term build its postings
 			while (iter.hasNext()) {
 				df++;
