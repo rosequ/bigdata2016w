@@ -124,6 +124,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 			}
 			currentTerm=key.getKey().toString();
 			TERM.set(currentTerm);
+			System.out.println(TERM);
 			Iterator<IntWritable> iter = values.iterator(); //current term build its postings
 			while (iter.hasNext()) {
 				df++;
@@ -147,6 +148,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 			DataOutputStream out = new DataOutputStream(fullLastTermPostings);
 			WritableUtils.writeVInt(out, df);
 			out.write(partialPostings.toByteArray());
+			System.out.println(TERM);
 
 			context.write(TERM, new BytesWritable(fullLastTermPostings.toByteArray()));
 

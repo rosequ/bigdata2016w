@@ -1,6 +1,8 @@
 package ca.uwaterloo.cs.bigdata2016w.xeniaqian94.assignment3;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
@@ -13,9 +15,11 @@ import org.apache.hadoop.fs.ContentSummary;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.MapFile;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.WritableUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.kohsuke.args4j.CmdLineException;
@@ -31,19 +35,19 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 	private MapFile.Reader index;
 	private FSDataInputStream collection;
 	private Stack<Set<Integer>> stack;
+	private String indexPath;
+	private int numReduceTasks;
+	private FileSystem fs;
 
 	private BooleanRetrievalCompressed() {
 	}
 
-	private void initialize(String indexPath, String collectionPath, FileSystem fs) throws IOException {
+	private void initialize(String collectionPath) throws IOException {
 		Path pt = new Path(indexPath);
 		ContentSummary cs = fs.getContentSummary(pt);
 		long fileCount = cs.getFileCount();
 		System.out.println("Total file count is \t" + fileCount);
-		int numReduceTasks=(int) (fileCount-1); //To hash
-		
-		
-		index = new MapFile.Reader(new Path(indexPath + "/part-r-00000"), fs.getConf());	
+		numReduceTasks = (int) (fileCount - 1); // To hash
 		collection = fs.open(new Path(collectionPath));
 		stack = new Stack<Set<Integer>>();
 	}
@@ -117,12 +121,35 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 
 	private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
 		Text key = new Text();
-		PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> value = new PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>();
+		BytesWritable value = new BytesWritable();
 
 		key.set(term);
+		
+		int whichFile=(term.hashCode() & Integer.MAX_VALUE) % numReduceTasks;
+		index = new MapFile.Reader(new Path(indexPath + "/part-r-"+String.format("%05d", whichFile)), fs.getConf());
 		index.get(key, value);
 
-		return value.getRightElement();
+		byte[] bytes = value.getBytes();
+
+		ByteArrayInputStream oldPostings = new ByteArrayInputStream(bytes);
+		DataInputStream inStream = new DataInputStream(oldPostings);
+
+		ArrayListWritable<PairOfInts> postings = new ArrayListWritable<PairOfInts>();
+
+		int docno = 0;
+		int gap = 0;
+		int tf = -1;
+		int df = WritableUtils.readVInt(inStream);
+
+		for (int i = 0; i < df; i++) {
+			gap = WritableUtils.readVInt(inStream);
+			tf = WritableUtils.readVInt(inStream);
+			docno = docno + gap;
+			postings.add(new PairOfInts(docno, tf));
+		}
+
+		return postings;
+
 	}
 
 	private String fetchLine(long offset) throws IOException {
@@ -163,9 +190,10 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 			return -1;
 		}
 
-		FileSystem fs = FileSystem.get(new Configuration());
+		fs = FileSystem.get(new Configuration());
 
-		initialize(args.index, args.collection, fs);
+		indexPath=args.index;
+		initialize(args.collection);
 
 		System.out.println("Query: " + args.query);
 		long startTime = System.currentTimeMillis();
