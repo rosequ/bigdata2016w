@@ -87,18 +87,18 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 	}
 
 	private static class MyReducer extends Reducer<PairOfStringInt, IntWritable, Text, BytesWritable> {
-		private final static Text TERM = new Text();
+		private final  Text TERM = new Text();
 
-		private final static ByteArrayOutputStream partialPostings = new ByteArrayOutputStream();
-		private final static DataOutputStream outStream = new DataOutputStream(partialPostings);
+		private final  ByteArrayOutputStream partialPostings = new ByteArrayOutputStream();
+		private final  DataOutputStream outStream = new DataOutputStream(partialPostings);
 
-		private static int lastDocno = 0;
-		private static int thisDocno = 0;
-		private static int gap = 0;
+		private  int lastDocno = 0;
+		private  int thisDocno = 0;
+		private  int gap = 0;
 
-		private static int df = 0;
-		private static int tf = 0;
-		private static String currentTerm = null;
+		private  int df = 0;
+		private  int tf = 0;
+		private  String currentTerm = null;
 
 		@Override
 		public void reduce(PairOfStringInt key, Iterable<IntWritable> values, Context context)
@@ -123,7 +123,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 				partialPostings.reset();
 			}
 			currentTerm=key.getKey().toString();
-			TERM.set(currentTerm);
+			
 			System.out.println(TERM);
 			Iterator<IntWritable> iter = values.iterator(); //current term build its postings
 			while (iter.hasNext()) {
@@ -141,6 +141,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
 
+			TERM.set(currentTerm);
 			outStream.flush();
 			partialPostings.flush();
 
