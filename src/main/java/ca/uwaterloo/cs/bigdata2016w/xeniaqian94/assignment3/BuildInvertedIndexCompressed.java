@@ -123,6 +123,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 				partialPostings.reset();
 			}
 			currentTerm=key.getKey().toString();
+			TERM.set(currentTerm);
 			Iterator<IntWritable> iter = values.iterator(); //current term build its postings
 			while (iter.hasNext()) {
 				df++;
@@ -138,7 +139,6 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
-			TERM.set(currentTerm);
 
 			outStream.flush();
 			partialPostings.flush();
