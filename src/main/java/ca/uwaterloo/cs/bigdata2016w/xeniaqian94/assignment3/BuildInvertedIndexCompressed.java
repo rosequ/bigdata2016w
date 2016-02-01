@@ -154,6 +154,9 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 
 			partialPostings.close();
 			outStream.close();
+			fullLastTermPostings.close();
+			out.close();
+			
 		}
 	}
 
