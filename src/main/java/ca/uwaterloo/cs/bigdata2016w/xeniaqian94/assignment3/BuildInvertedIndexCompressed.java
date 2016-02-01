@@ -124,7 +124,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 			}
 			currentTerm=key.getKey().toString();
 			
-			System.out.println(TERM);
+//			System.out.println(TERM);
 			Iterator<IntWritable> iter = values.iterator(); //current term build its postings
 			while (iter.hasNext()) {
 				df++;
