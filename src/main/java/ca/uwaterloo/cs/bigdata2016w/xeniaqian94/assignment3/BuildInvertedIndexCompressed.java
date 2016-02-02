@@ -95,9 +95,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 		private  int lastDocno = 0;
 		private  int thisDocno = 0;
 		private  int gap = 0;
-
 		private  int df = 0;
-		private  int tf = 0;
 		private  String currentTerm = null;
 
 		@Override
