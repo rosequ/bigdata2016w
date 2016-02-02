@@ -30,7 +30,7 @@ The size of my compressed index for the sample Wikipedia collection is as follow
 
 ####Question 3.
 
-query "waterloo stanford OR cheriton AND"
+Query "waterloo stanford OR cheriton AND"
 
 	8468033	Eurostar	
 
@@ -46,3 +46,9 @@ query "waterloo stanford OR cheriton AND"
 
 
 ####Question 4.
+
+Query "internet startup AND canada AND ontario AND"
+
+	59973021 Amazon.com
+	
+	718311526   Criticism of Facebook
