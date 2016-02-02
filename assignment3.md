@@ -14,7 +14,7 @@ Query "white red OR rose AND pluck AND"
 	1713274	    From off this brier pluck a white rose with me.
 	1713428	    Pluck a red rose from off this thorn with me.
 	1713566	    I pluck this white rose with Plantagenet.
-	1713612	  SUFFOLK. I pluck this red rose with young Somerset,
+	1713612	  	SUFFOLK. I pluck this red rose with young Somerset,
 	1714623	    In sign whereof I pluck a white rose too.
 
 ####Question 2.
@@ -32,7 +32,7 @@ The size of my compressed index for the sample Wikipedia collection is as follow
 
 Query "waterloo stanford OR cheriton AND"
 
-	8468033	Eurostar	
+	8468033		Eurostar	
 
 	88418750	Railway platform	
 
@@ -49,6 +49,6 @@ Query "waterloo stanford OR cheriton AND"
 
 Query "internet startup AND canada AND ontario AND"
 
-	59973021 Amazon.com
+	59973021	Amazon.com
 	
 	718311526   Criticism of Facebook
