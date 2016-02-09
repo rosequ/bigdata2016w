@@ -65,8 +65,8 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
       int source=context.getConfiguration().getInt(SOURCES, 0);
       
       if (this_id==source)
-    	  node.setPageRank(1);
-      else node.setPageRank(0);
+    	  node.setPageRank(0);
+      else node.setPageRank(Float.NEGATIVE_INFINITY);
 
       nid.set(this_id);
       if (arr.length == 1) {
