@@ -94,7 +94,6 @@ public class BuildPageRankRecords extends Configured implements Tool {
   private static final String INPUT = "input";
   private static final String OUTPUT = "output";
   private static final String NUM_NODES = "numNodes";
-  private static final String SOURCES = "sources";
 
   /**
    * Runs this tool.
@@ -109,8 +108,6 @@ public class BuildPageRankRecords extends Configured implements Tool {
         .withDescription("output path").create(OUTPUT));
     options.addOption(OptionBuilder.withArgName("num").hasArg()
         .withDescription("number of nodes").create(NUM_NODES));
-    options.addOption(OptionBuilder.withArgName("sources").hasArg()
-            .withDescription("sources").create(SOURCES));
 
     CommandLine cmdline;
     CommandLineParser parser = new GnuParser();
@@ -122,7 +119,7 @@ public class BuildPageRankRecords extends Configured implements Tool {
       return -1;
     }
 
-    if (!cmdline.hasOption(INPUT) || !cmdline.hasOption(OUTPUT) || !cmdline.hasOption(NUM_NODES)|| !cmdline.hasOption(SOURCES)) {
+    if (!cmdline.hasOption(INPUT) || !cmdline.hasOption(OUTPUT) || !cmdline.hasOption(NUM_NODES)) {
       System.out.println("args: " + Arrays.toString(args));
       HelpFormatter formatter = new HelpFormatter();
       formatter.setWidth(120);
@@ -134,7 +131,6 @@ public class BuildPageRankRecords extends Configured implements Tool {
     String inputPath = cmdline.getOptionValue(INPUT);
     String outputPath = cmdline.getOptionValue(OUTPUT);
     int n = Integer.parseInt(cmdline.getOptionValue(NUM_NODES));
-    int source = Integer.parseInt(cmdline.getOptionValue(SOURCES));
 
     LOG.info("Tool name: " + BuildPageRankRecords.class.getSimpleName());
     LOG.info(" - inputDir: " + inputPath);
