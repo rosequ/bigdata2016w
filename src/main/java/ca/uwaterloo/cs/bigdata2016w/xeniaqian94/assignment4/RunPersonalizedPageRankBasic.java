@@ -103,6 +103,7 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 					newP.add(p.get(i) - (float) StrictMath.log(list.size()));
 
 				}
+				System.out.println("Wrote a correct pagerank array "+(newP.size()==list.size()));
 				context.getCounter(PageRank.edges).increment(list.size());
 
 				// Iterate over neighbors.
@@ -138,7 +139,6 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 		public void setup(Context context) throws IOException {
 			Configuration conf = context.getConfiguration();
 			String[] sourceStringList = context.getConfiguration().getStrings("source", "");
-
 			for (int i = 0; i < sourceStringList.length; i++) {
 				sourceList.add(Integer.parseInt(sourceStringList[i]));
 				totalMass.add(Float.NEGATIVE_INFINITY);
@@ -195,7 +195,6 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 				// Everything checks out, emit final node structure with updated
 				// PageRank value.
 				context.write(nid, node);
-
 				// Keep track of total PageRank mass.
 				for (int i = 0; i < sourceLength; i++) {
 					totalMass.set(i, sumLogProbs(totalMass.get(i), mass.get(i)));
@@ -267,6 +266,7 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 			ArrayListOfFloatsWritable newP = new ArrayListOfFloatsWritable();
 			float jump;
 			float link;
+			System.out.println("sourceLength="+sourceLength);
 			for (int i = 0; i < sourceLength; i++) {
 				if (sourceList.get(i).equals(nid)) {
 					LOG.info("This is the " + i + "th source node:" + nid.get());

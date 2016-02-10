@@ -66,6 +66,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 			for (int i = 0; i < source.length; i++) {
 				ONE.set(i);
 				context.write(ONE, node);
+				System.out.println("wrote "+ONE.get()+node.getPageRank(ONE.get()));
 			}
 
 		}
