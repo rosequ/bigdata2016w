@@ -55,7 +55,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		}
 	}
 
-	private static class ReduceClass extends Reducer<IntWritable, PageRankNode, IntWritable, FloatWritable> {
+	private static class ReduceClass extends Reducer<IntWritable, PageRankNode, FloatWritable, IntWritable> {
 		// For keeping track of PageRank mass encountered, so we can compute
 		// missing PageRank mass lost
 		// through dangling nodes.
@@ -96,7 +96,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 				ONE.set(nodeid);
 				ONEF.set(pagerank);
 
-				context.write(ONE, ONEF);
+				context.write(ONEF, ONE);
 			}
 			
 			
