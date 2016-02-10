@@ -95,9 +95,13 @@ public class PartitionGraph extends Configured implements Tool {
 		LOG.info(" - num partitions: " + numParts);
 		LOG.info(" - node cnt: " + nodeCount);
 		LOG.info(" - use range partitioner: " + useRange);
+		
+	    
 
 		Configuration conf = getConf();
 		conf.setInt("NodeCount", nodeCount);
+		// Delete the output directory if it exists already.
+	    FileSystem.get(conf).delete(new Path(inPath), true);
 
 		Job job = Job.getInstance(conf);
 		job.setJobName(PartitionGraph.class.getSimpleName() + ":" + inPath);
