@@ -28,6 +28,7 @@ import org.apache.hadoop.util.ToolRunner;
 import org.apache.log4j.Logger;
 
 import tl.lin.data.array.ArrayListOfIntsWritable;
+import tl.lin.data.array.ArrayListOfFloatsWritable;
 
 /**
  * <p>
@@ -61,11 +62,12 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
     public void map(LongWritable key, Text t, Context context) throws IOException,
         InterruptedException {
       String[] arr = t.toString().trim().split("\\s+");
+      
       int this_id=Integer.parseInt(arr[0]);
       int source=context.getConfiguration().getInt(SOURCES, 0);
       
       if (this_id==source)
-    	  node.setPageRank(0);
+    	  node.setPageRank((float) StrictMath.log(1.0));
       else node.setPageRank(Float.NEGATIVE_INFINITY);
 
       nid.set(this_id);
