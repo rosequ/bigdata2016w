@@ -1,6 +1,7 @@
 package ca.uwaterloo.cs.bigdata2016w.xeniaqian94.assignment4;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -45,23 +46,39 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 	private static final String TOP = "top";
 	private static final String SOURCES = "sources";
 
-	private static class MapClass extends Mapper<IntWritable, PageRankNode, IntWritable, PageRankNode> {
+	private static class MapClass
+			extends Mapper<IntWritable, PageRankNodeMultisource, IntWritable, PageRankNodeMultisource> {
 		IntWritable ONE = new IntWritable(1);
+		private String[] source;
 
 		@Override
-		public void map(IntWritable nid, PageRankNode node, Context context) throws IOException, InterruptedException {
-			context.write(ONE, node);
+		public void setup(Context context) throws IOException {
+			Configuration conf = context.getConfiguration();
+
+			source = conf.getStrings("source", "");
+
+		}
+
+		@Override
+		public void map(IntWritable nid, PageRankNodeMultisource node, Context context)
+				throws IOException, InterruptedException {
+
+			for (int i = 0; i < source.length; i++) {
+				ONE.set(i);
+				context.write(ONE, node);
+			}
 
 		}
 	}
 
-	private static class ReduceClass extends Reducer<IntWritable, PageRankNode, FloatWritable, IntWritable> {
+	private static class ReduceClass extends Reducer<IntWritable, PageRankNodeMultisource, FloatWritable, IntWritable> {
 		// For keeping track of PageRank mass encountered, so we can compute
 		// missing PageRank mass lost
 		// through dangling nodes.
-		private int source = 0;
+		private String[] source;
 		private int top = 0;
 		TopScoredObjects<Integer> topN;
+		private static final ArrayList sourceList = new ArrayList<Integer>();
 
 		private final static IntWritable ONE = new IntWritable();
 		private final static FloatWritable ONEF = new FloatWritable();
@@ -69,23 +86,25 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		@Override
 		public void setup(Context context) throws IOException {
 			Configuration conf = context.getConfiguration();
+			String[] sourceStringList = context.getConfiguration().getStrings("source", "");
 
-			source = conf.getInt("source", 0);
+			for (int i = 0; i < sourceStringList.length; i++) {
+				sourceList.add(Integer.parseInt(sourceStringList[i]));
+			}
 			top = conf.getInt("top", 0);
 			topN = new TopScoredObjects<Integer>(top);
 		}
 
 		@Override
-		public void reduce(IntWritable nid, Iterable<PageRankNode> iterable, Context context)
+		public void reduce(IntWritable sourceId, Iterable<PageRankNodeMultisource> iterable, Context context)
 				throws IOException, InterruptedException {
-			Iterator<PageRankNode> iter = iterable.iterator();
-
+			Iterator<PageRankNodeMultisource> iter = iterable.iterator();
 			while (iter.hasNext()) {
-				PageRankNode thisNode = iter.next();
-				topN.add(thisNode.getNodeId(), thisNode.getPageRank());
+				PageRankNodeMultisource thisNode = iter.next();
+				topN.add(thisNode.getNodeId(), thisNode.getPageRank(sourceId.get()));
 			}
-			System.out.println("Source: " + source);
-			LOG.info("Source: " + source);
+			System.out.println("Source: "+sourceList.get(sourceId.get()));
+			LOG.info("Source: "+sourceList.get(sourceId.get()));
 
 			for (PairOfObjectFloat<Integer> pair : topN.extractAll()) {
 
@@ -98,8 +117,6 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 
 				context.write(ONEF, ONE);
 			}
-			
-			
 
 		}
 	}
@@ -139,7 +156,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		String inputPath = cmdline.getOptionValue(INPUT);
 		String outputPath = cmdline.getOptionValue(OUTPUT);
 		int top = Integer.parseInt(cmdline.getOptionValue(TOP));
-		int source = Integer.parseInt(cmdline.getOptionValue(SOURCES));
+		String source = cmdline.getOptionValue(SOURCES);
 
 		LOG.info("Tool name: " + ExtractTopPersonalizedPageRankNodes.class.getSimpleName());
 		LOG.info(" - input: " + inputPath);
@@ -149,7 +166,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 
 		Configuration conf = new Configuration();
 		conf.setInt("mapred.min.split.size", 1024 * 1024 * 1024);
-		conf.setInt("source", source);
+		// conf.setStrings("sources", source);
 
 		// Delete the output directory if it exists already.
 		FileSystem.get(conf).delete(new Path(outputPath), true);
@@ -157,7 +174,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		Job job = Job.getInstance(getConf());
 		job.setJobName("ExtractTopPersonalizedPageRankNodes");
 		job.setJarByClass(ExtractTopPersonalizedPageRankNodes.class);
-		job.getConfiguration().setInt("source", source);
+		job.getConfiguration().setStrings("sources", source);
 		job.getConfiguration().setInt("top", top);
 
 		job.setNumReduceTasks(1);
@@ -169,7 +186,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		job.setOutputFormatClass(TextOutputFormat.class);
 
 		job.setMapOutputKeyClass(IntWritable.class);
-		job.setMapOutputValueClass(PageRankNode.class);
+		job.setMapOutputValueClass(PageRankNodeMultisource.class);
 
 		job.setOutputKeyClass(IntWritable.class);
 		job.setOutputValueClass(FloatWritable.class);
