@@ -84,12 +84,13 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 				PageRankNode thisNode = iter.next();
 				topN.add(thisNode.getNodeId(), thisNode.getPageRank());
 			}
+			System.out.println("Source: " + source);
 
 			for (PairOfObjectFloat<Integer> pair : topN.extractAll()) {
 
 				int nodeid = ((Integer) pair.getLeftElement());
 				float pagerank = (float) Math.exp(pair.getRightElement());
-				LOG.info(String.format("%.5f %d", pagerank, nodeid));
+				System.out.println(String.format("%.5f %d", pagerank, nodeid));
 				ONE.set(nodeid);
 				ONEF.set(pagerank);
 
@@ -146,6 +147,9 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		conf.setInt("mapred.min.split.size", 1024 * 1024 * 1024);
 		conf.setInt("source", source);
 
+		// Delete the output directory if it exists already.
+		FileSystem.get(conf).delete(new Path(outputPath), true);
+
 		Job job = Job.getInstance(getConf());
 		job.setJobName("ExtractTopPersonalizedPageRankNodes");
 		job.setJarByClass(ExtractTopPersonalizedPageRankNodes.class);
@@ -173,9 +177,6 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		long startTime = System.currentTimeMillis();
 		job.waitForCompletion(true);
 		System.out.println("Job Finished in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
-
-		// Delete the output directory if it exists already.
-		FileSystem.get(conf).delete(new Path(outputPath), true);
 
 		job.waitForCompletion(true);
 
