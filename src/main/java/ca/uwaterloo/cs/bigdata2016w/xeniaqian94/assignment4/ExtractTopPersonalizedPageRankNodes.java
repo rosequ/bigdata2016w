@@ -85,17 +85,21 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 				topN.add(thisNode.getNodeId(), thisNode.getPageRank());
 			}
 			System.out.println("Source: " + source);
+			LOG.info("Source: " + source);
 
 			for (PairOfObjectFloat<Integer> pair : topN.extractAll()) {
 
 				int nodeid = ((Integer) pair.getLeftElement());
 				float pagerank = (float) Math.exp(pair.getRightElement());
 				System.out.println(String.format("%.5f %d", pagerank, nodeid));
+				LOG.info(String.format("%.5f %d", pagerank, nodeid));
 				ONE.set(nodeid);
 				ONEF.set(pagerank);
 
 				context.write(ONE, ONEF);
 			}
+			
+			
 
 		}
 	}
