@@ -167,6 +167,7 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
     Configuration conf = getConf();
     conf.setInt(NODE_CNT_FIELD, n);
     conf.setStrings(SOURCES, source);
+    System.out.println("here the cmd source is"+source);
     String[] sourceStringList=conf.getStrings(SOURCES,"");
     for (String s:sourceStringList)
     	System.out.println(s);
