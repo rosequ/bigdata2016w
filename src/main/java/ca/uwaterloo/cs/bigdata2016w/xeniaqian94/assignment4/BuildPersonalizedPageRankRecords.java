@@ -72,12 +72,12 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
       String[] arr = t.toString().trim().split("\\s+");
       
       int this_id=Integer.parseInt(arr[0]);
-      int source=context.getConfiguration().getInt(SOURCES, 0);
+//      int source=context.getConfiguration().getInt(SOURCES, 0);
       ArrayListOfFloatsWritable p=new ArrayListOfFloatsWritable();
       
       for (int i=0;i<sourceList.size();i++){
     	  
-    	  if (this_id==source)
+    	  if (sourceList.get(i).equals(this_id))
     		  p.add((float) StrictMath.log(1.0));
     	  else p.add(Float.NEGATIVE_INFINITY);
       }
@@ -167,6 +167,9 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
     Configuration conf = getConf();
     conf.setInt(NODE_CNT_FIELD, n);
     conf.setStrings(SOURCES, source);
+    String[] sourceStringList=conf.getStrings(SOURCES,"");
+    for (String s:sourceStringList)
+    	System.out.println(s);
     conf.setInt("mapred.min.split.size", 1024 * 1024 * 1024);
 
     Job job = Job.getInstance(conf);
