@@ -85,7 +85,7 @@ public class DumpPageRankRecordsToPlainText extends Configured implements Tool {
     job.setOutputFormatClass(TextOutputFormat.class);
 
     job.setMapOutputKeyClass(IntWritable.class);
-    job.setMapOutputValueClass(PageRankNode.class);
+    job.setMapOutputValueClass(PageRankNodeMultisource.class);
 
     // Delete the output directory if it exists already.
     FileSystem.get(conf).delete(new Path(outputPath), true);
