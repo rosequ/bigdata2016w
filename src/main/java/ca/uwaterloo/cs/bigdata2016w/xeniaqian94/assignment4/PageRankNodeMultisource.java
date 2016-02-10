@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
 
+import ca.uwaterloo.cs.bigdata2016w.xeniaqian94.assignment4.PageRankNode.Type;
 import tl.lin.data.array.ArrayListOfFloatsWritable;
 import tl.lin.data.array.ArrayListOfIntsWritable;
 
@@ -45,7 +46,7 @@ public class PageRankNodeMultisource implements Writable {
 	public float getPageRank(int i) {
 		return pagerank.get(i);
 	}
-	
+
 	public ArrayListOfFloatsWritable getPageRankArray() {
 		return pagerank;
 	}
@@ -93,8 +94,8 @@ public class PageRankNodeMultisource implements Writable {
 		int b = in.readByte();
 		type = mapping[b];
 		nodeid = in.readInt();
-		
-		pagerank=new ArrayListOfFloatsWritable();
+
+		pagerank = new ArrayListOfFloatsWritable();
 
 		if (type.equals(Type.Mass)) {
 			pagerank.readFields(in);
@@ -119,14 +120,18 @@ public class PageRankNodeMultisource implements Writable {
 	public void write(DataOutput out) throws IOException {
 		out.writeByte(type.val);
 		out.writeInt(nodeid);
-		pagerank.write(out);
 
 		if (type.equals(Type.Mass)) {
+			pagerank.write(out);
 			return;
 		}
 
+		if (type.equals(Type.Complete)) {
+			pagerank.write(out);
+		}
 
 		adjacenyList.write(out);
+
 	}
 
 	@Override

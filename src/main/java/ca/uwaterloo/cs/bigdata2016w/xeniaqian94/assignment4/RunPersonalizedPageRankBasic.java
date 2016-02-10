@@ -396,9 +396,7 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 
 	private ArrayListOfFloatsWritable phase1(int i, int j, String basePath, int numNodes, boolean useCombiner,
 			boolean useInMapperCombiner, String source) throws Exception {
-		Job job = Job.getInstance(getConf());
-		job.setJobName("PageRank:Basic:iteration" + j + ":Phase1");
-		job.setJarByClass(RunPersonalizedPageRankBasic.class);
+		
 
 		String in = basePath + "/iter" + formatter.format(i);
 		String out = basePath + "/iter" + formatter.format(j) + "t";
@@ -426,6 +424,10 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 		// Delete the output directory if it exists already.
 		FileSystem.get(getConf()).delete(new Path(out), true);
 		FileSystem.get(getConf()).delete(new Path(outm), true);
+		
+		Job job = Job.getInstance(getConf());
+		job.setJobName("PageRank:Basic:iteration" + j + ":Phase1");
+		job.setJarByClass(RunPersonalizedPageRankBasic.class);
 
 		job.getConfiguration().setInt("NodeCount", numNodes);
 		job.getConfiguration().setStrings("source", source);
