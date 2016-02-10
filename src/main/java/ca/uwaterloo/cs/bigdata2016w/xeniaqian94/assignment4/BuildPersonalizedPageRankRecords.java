@@ -1,6 +1,7 @@
 package ca.uwaterloo.cs.bigdata2016w.xeniaqian94.assignment4;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
@@ -47,10 +48,17 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
   private static class MyMapper extends Mapper<LongWritable, Text, IntWritable, PageRankNode> {
     private static final IntWritable nid = new IntWritable();
     private static final PageRankNode node = new PageRankNode();
+    private static final ArrayList sourceList= new ArrayList<Integer>();
+    
 
     @Override
     public void setup(Mapper<LongWritable, Text, IntWritable, PageRankNode>.Context context) {
       int n = context.getConfiguration().getInt(NODE_CNT_FIELD, 0);
+      String[] sourceStringList=context.getConfiguration().getStrings(SOURCES,"");
+      
+      for(int i = 0; i < sourceStringList.length; i++){
+    	  sourceList.add(Integer.parseInt(sourceStringList[i]));
+		}
       if (n == 0) {
         throw new RuntimeException(NODE_CNT_FIELD + " cannot be 0!");
       }
@@ -65,10 +73,15 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
       
       int this_id=Integer.parseInt(arr[0]);
       int source=context.getConfiguration().getInt(SOURCES, 0);
+      ArrayListOfFloatsWritable p=new ArrayListOfFloatsWritable();
       
-      if (this_id==source)
-    	  node.setPageRank((float) StrictMath.log(1.0));
-      else node.setPageRank(Float.NEGATIVE_INFINITY);
+      for (int i=0;i<sourceList.size();i++){
+    	  
+    	  if (this_id==source)
+    		  p.add((float) StrictMath.log(1.0));
+    	  else p.add(Float.NEGATIVE_INFINITY);
+      }
+      node.setPageRankArray(p);
 
       nid.set(this_id);
       if (arr.length == 1) {
@@ -142,7 +155,8 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
     String inputPath = cmdline.getOptionValue(INPUT);
     String outputPath = cmdline.getOptionValue(OUTPUT);
     int n = Integer.parseInt(cmdline.getOptionValue(NUM_NODES));
-    int source = Integer.parseInt(cmdline.getOptionValue(SOURCES));
+    String source = cmdline.getOptionValue(SOURCES);
+    
 
     LOG.info("Tool name: " + BuildPersonalizedPageRankRecords.class.getSimpleName());
     LOG.info(" - inputDir: " + inputPath);
@@ -152,7 +166,7 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
 
     Configuration conf = getConf();
     conf.setInt(NODE_CNT_FIELD, n);
-    conf.setInt(SOURCES,source);
+    conf.setStrings(SOURCES, source);
     conf.setInt("mapred.min.split.size", 1024 * 1024 * 1024);
 
     Job job = Job.getInstance(conf);
