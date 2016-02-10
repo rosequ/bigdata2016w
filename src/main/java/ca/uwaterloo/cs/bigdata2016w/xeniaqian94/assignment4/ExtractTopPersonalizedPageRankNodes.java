@@ -174,7 +174,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		Job job = Job.getInstance(getConf());
 		job.setJobName("ExtractTopPersonalizedPageRankNodes");
 		job.setJarByClass(ExtractTopPersonalizedPageRankNodes.class);
-		job.getConfiguration().setStrings("sources", source);
+		job.getConfiguration().setStrings("source", source);
 		job.getConfiguration().setInt("top", top);
 
 		job.setNumReduceTasks(1);
