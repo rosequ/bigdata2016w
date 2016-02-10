@@ -489,6 +489,9 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 		LOG.info("computed number of partitions: " + numPartitions);
 
 		int numReduceTasks = numPartitions;
+		
+		// Delete the output directory if it exists already.
+	    FileSystem.get(getConf()).delete(new Path(out), true);
 
 		job.getConfiguration().setInt("NodeCount", numNodes);
 		job.getConfiguration().setInt("source", source);
