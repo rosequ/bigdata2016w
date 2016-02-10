@@ -52,3 +52,24 @@ Query "internet startup AND canada AND ontario AND"
 	59973021	Amazon.com
 	
 	718311526   Criticism of Facebook
+
+Marks
+
+Q1 5
+Q2a 4
+Q2b 4
+Q3 4
+
+Q4 5
+Q5a 4
+Q5b 4 
+Q6 4
+
+AC 5
+LC 5
+
+Total 44
+
+Comments
+- Modified output of query engine
+- Altiscale outputs full documents in query
