@@ -119,24 +119,19 @@ public class PageRankNodeMultisource implements Writable {
 	public void write(DataOutput out) throws IOException {
 		out.writeByte(type.val);
 		out.writeInt(nodeid);
+		pagerank.write(out);
 
 		if (type.equals(Type.Mass)) {
-			for (Float p : pagerank)
-				out.writeFloat(p);
 			return;
 		}
 
-		if (type.equals(Type.Complete)) {
-			for (Float p : pagerank)
-				out.writeFloat(p);
-		}
 
 		adjacenyList.write(out);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("{%d %.4f %s}", nodeid, pagerank,
+		return String.format("{%d %s %s}", nodeid, (pagerank == null ? "[]" : pagerank.toString(15)),
 				(adjacenyList == null ? "[]" : adjacenyList.toString(10)));
 	}
 
