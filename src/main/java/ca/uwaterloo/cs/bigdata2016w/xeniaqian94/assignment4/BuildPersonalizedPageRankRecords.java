@@ -45,14 +45,14 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
 
   private static final String NODE_CNT_FIELD = "node.cnt";
 
-  private static class MyMapper extends Mapper<LongWritable, Text, IntWritable, PageRankNode> {
+  private static class MyMapper extends Mapper<LongWritable, Text, IntWritable, PageRankNodeMultisource> {
     private static final IntWritable nid = new IntWritable();
-    private static final PageRankNode node = new PageRankNode();
+    private static final PageRankNodeMultisource node = new PageRankNodeMultisource();
     private static final ArrayList sourceList= new ArrayList<Integer>();
     
 
     @Override
-    public void setup(Mapper<LongWritable, Text, IntWritable, PageRankNode>.Context context) {
+    public void setup(Mapper<LongWritable, Text, IntWritable, PageRankNodeMultisource>.Context context) {
       int n = context.getConfiguration().getInt(NODE_CNT_FIELD, 0);
       String[] sourceStringList=context.getConfiguration().getStrings(SOURCES,"");
       
@@ -62,7 +62,7 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
       if (n == 0) {
         throw new RuntimeException(NODE_CNT_FIELD + " cannot be 0!");
       }
-      node.setType(PageRankNode.Type.Complete);
+      node.setType(PageRankNodeMultisource.Type.Complete);
       
     }
 
@@ -182,10 +182,10 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
     job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
     job.setMapOutputKeyClass(IntWritable.class);
-    job.setMapOutputValueClass(PageRankNode.class);
+    job.setMapOutputValueClass(PageRankNodeMultisource.class);
 
     job.setOutputKeyClass(IntWritable.class);
-    job.setOutputValueClass(PageRankNode.class);
+    job.setOutputValueClass(PageRankNodeMultisource.class);
 
     job.setMapperClass(MyMapper.class);
 
