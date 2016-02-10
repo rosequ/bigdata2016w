@@ -101,7 +101,7 @@ public class PartitionGraph extends Configured implements Tool {
 		Configuration conf = getConf();
 		conf.setInt("NodeCount", nodeCount);
 		// Delete the output directory if it exists already.
-	    FileSystem.get(conf).delete(new Path(inPath), true);
+	    FileSystem.get(conf).delete(new Path(outPath), true);
 
 		Job job = Job.getInstance(conf);
 		job.setJobName(PartitionGraph.class.getSimpleName() + ":" + inPath);
