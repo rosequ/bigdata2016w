@@ -66,7 +66,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 			for (int i = 0; i < source.length; i++) {
 				ONE.set(i);
 				context.write(ONE, node);
-				System.out.println("wrote "+ONE.get()+node.getPageRank(ONE.get()));
+//				System.out.println("wrote "+ONE.get()+node.getPageRank(ONE.get()));
 			}
 
 		}
@@ -178,7 +178,7 @@ public class ExtractTopPersonalizedPageRankNodes extends Configured implements T
 		job.getConfiguration().setStrings("source", source);
 		job.getConfiguration().setInt("top", top);
 
-		job.setNumReduceTasks(1);
+		job.setNumReduceTasks((job.getConfiguration().getStrings("source")).length);
 
 		FileInputFormat.setInputPaths(job, new Path(inputPath));
 		FileOutputFormat.setOutputPath(job, new Path(outputPath));
