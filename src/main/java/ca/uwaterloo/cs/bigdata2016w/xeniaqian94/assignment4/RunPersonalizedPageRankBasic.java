@@ -270,8 +270,9 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 			float jump;
 			float link;
 			
+//			System.out.println(sourceList.get(i)+" "+nid)
 			for (int i = 0; i < sourceLength; i++) {
-				if (sourceList.get(i).equals(nid)) {
+				if (sourceList.get(i).equals(nid.get())) {
 					LOG.info("This is the " + i + "th source node:" + nid.get());
 
 					link = (float) Math.log(1.0f - ALPHA)
