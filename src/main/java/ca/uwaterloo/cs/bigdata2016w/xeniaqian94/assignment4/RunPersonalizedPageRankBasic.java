@@ -258,8 +258,8 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 				missingMass.add(conf.getFloat(thisConf, 0.0f));
 			}
 			sourceLength = sourceStringList.length;
-			System.out.println("sourceLength="+sourceLength+" "+sourceList.get(0)+" "+sourceList.get(1)+" "+sourceList.get(2));
-			System.out.println(missingMass.toString());
+//			System.out.println("sourceLength="+sourceLength+" "+sourceList.get(0)+" "+sourceList.get(1)+" "+sourceList.get(2));
+//			System.out.println(missingMass.toString());
 		}
 
 		@Override
