@@ -98,9 +98,9 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 				ArrayListOfIntsWritable list = node.getAdjacenyList();
 
 				ArrayListOfFloatsWritable p = node.getPageRankArray();
-				ArrayListOfFloatsWritable newP = new ArrayListOfFloatsWritable();
+//				ArrayListOfFloatsWritable newP = new ArrayListOfFloatsWritable();
 				for (int i = 0; i < p.size(); i++) {
-					newP.add(p.get(i) - (float) StrictMath.log(list.size()));
+					p.set(i,(p.get(i) - (float) StrictMath.log(list.size())));
 
 				}
 
@@ -111,7 +111,7 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 					neighbor.set(list.get(i));
 					intermediateMass.setNodeId(list.get(i));
 					intermediateMass.setType(PageRankNodeMultisource.Type.Mass);
-					intermediateMass.setPageRankArray(newP);
+					intermediateMass.setPageRankArray(p);
 
 					// Emit messages with PageRank mass to neighbors.
 					context.write(neighbor, intermediateMass);
@@ -258,17 +258,18 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 				missingMass.add(conf.getFloat(thisConf, 0.0f));
 			}
 			sourceLength = sourceStringList.length;
+			System.out.println("sourceLength="+sourceLength+" "+sourceList.get(0)+" "+sourceList.get(1)+" "+sourceList.get(2));
+			System.out.println(missingMass.toString());
 		}
 
 		@Override
 		public void map(IntWritable nid, PageRankNodeMultisource node, Context context)
 				throws IOException, InterruptedException {
 			ArrayListOfFloatsWritable p = node.getPageRankArray();
-			ArrayListOfFloatsWritable newP = new ArrayListOfFloatsWritable();
+//			ArrayListOfFloatsWritable newP = new ArrayListOfFloatsWritable();
 			float jump;
 			float link;
-			System.out.println("sourceLength="+sourceLength+" "+sourceList.get(0)+" "+sourceList.get(1)+" "+sourceList.get(2));
-			System.out.println(missingMass.toString());
+			
 			for (int i = 0; i < sourceLength; i++) {
 				if (sourceList.get(i).equals(nid)) {
 					LOG.info("This is the " + i + "th source node:" + nid.get());
@@ -282,9 +283,9 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 					jump = (float) (Float.NEGATIVE_INFINITY);
 
 				}
-				newP.add(sumLogProbs(jump, link));
+				p.set(i,sumLogProbs(jump, link));
 			}
-			node.setPageRankArray(newP);
+			node.setPageRankArray(p);
 			context.write(nid, node);
 		}
 	}
@@ -320,7 +321,7 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 		Options options = new Options();
 
 		options.addOption(new Option(COMBINER, "use combiner"));
-		options.addOption(new Option(INMAPPER_COMBINER, "user in-mapper combiner"));
+//		options.addOption(new Option(INMAPPER_COMBINER, "user in-mapper combiner"));
 		options.addOption(new Option(RANGE, "use range partitioner"));
 
 		options.addOption(OptionBuilder.withArgName("path").hasArg().withDescription("base path").create(BASE));
@@ -357,7 +358,7 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 		String source = cmdline.getOptionValue(SOURCES);
 
 		boolean useCombiner = cmdline.hasOption(COMBINER);
-		boolean useInmapCombiner = cmdline.hasOption(INMAPPER_COMBINER);
+//		boolean useInmapCombiner = cmdline.hasOption(INMAPPER_COMBINER);
 		boolean useRange = cmdline.hasOption(RANGE);
 
 		LOG.info("Tool name: RunPageRank");
@@ -367,12 +368,12 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 		LOG.info(" - end iteration: " + e);
 		LOG.info(" - source: " + source);
 		LOG.info(" - use combiner: " + useCombiner);
-		LOG.info(" - use in-mapper combiner: " + useInmapCombiner);
+//		LOG.info(" - use in-mapper combiner: " + useInmapCombiner);
 		LOG.info(" - user range partitioner: " + useRange);
 
 		// Iterate PageRank.
 		for (int i = s; i < e; i++) {
-			iteratePageRank(i, i + 1, basePath, n, useCombiner, useInmapCombiner, source);
+			iteratePageRank(i, i + 1, basePath, n, useCombiner, false, source);
 		}
 
 		return 0;
@@ -385,12 +386,17 @@ public class RunPersonalizedPageRankBasic extends Configured implements Tool {
 
 		// Job 1: distribute PageRank mass along outgoing edges.
 		ArrayListOfFloatsWritable mass = phase1(i, j, basePath, numNodes, useCombiner, useInMapperCombiner, source);
+		
 
 		// Find out how much PageRank mass got lost at the dangling nodes.
 		ArrayListOfFloatsWritable missing = new ArrayListOfFloatsWritable();
+		
+		
 		for (int k = 0; k < mass.size(); k++) {
 			missing.add(1.0f - (float) StrictMath.exp(mass.get(k)));
 		}
+		System.out.println("This iteration has "+i+" -> "+j+" "+mass.toString());
+		System.out.println("This iteration has "+i+" -> "+j+" "+missing.toString());
 
 		// Job 2: distribute missing mass, take care of random jump factor.
 		phase2(i, j, missing, basePath, numNodes, source);
