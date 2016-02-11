@@ -21,7 +21,7 @@ public class HashPartitioner extends Partitioner<IntWritable, Writable> implemen
 
   @Override
   public int getPartition(IntWritable key, Writable value, int numReduceTasks) {
-	  return (int)(Integer.hashCode(key.get()) & Integer.MAX_VALUE) % numReduceTasks;
+	  return (int)(new Integer(key.get()) & Integer.MAX_VALUE) % numReduceTasks;
 //    return (int) (((float) key.get() / (float) nodeCnt) * numReduceTasks) % numReduceTasks;
   }
 
