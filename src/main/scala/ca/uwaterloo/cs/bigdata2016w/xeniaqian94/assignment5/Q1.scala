@@ -30,14 +30,15 @@ object Q1 extends Tokenizer {
   def main(argv: Array[String]) {
     val args = new Conf(argv)
 
-    BasicConfigurator.configure();
+    println("hello world")
+//    BasicConfigurator.configure();
 
     log.info("Input: " + args.input())
     log.info("Date: " + args.date())
 
 
     val conf = new SparkConf().setAppName("Q1")
-    System.setProperty("hadoop.home.dir", "/");
+//    System.setProperty("hadoop.home.dir", "/");
 
     val sc = new SparkContext(conf)
 
@@ -50,7 +51,7 @@ object Q1 extends Tokenizer {
       .flatMap(line => {
         val tokens = line.split("|")
 
-        println(tokens(10) + " " + tokens(11) + " " + tokens(12))
+//        println(tokens(10) + " " + tokens(11) + " " + tokens(12))
         tokens.map(token=>(token,1))
 //        if (tokens.length > 1) tokens.sliding(2).flatMap(p => List((p(0), p(1)), (p(0), "*"))).toList else List()
       })
