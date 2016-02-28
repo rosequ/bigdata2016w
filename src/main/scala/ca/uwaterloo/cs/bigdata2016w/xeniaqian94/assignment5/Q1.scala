@@ -55,7 +55,8 @@ object Q1 extends Tokenizer {
             
             
             
-    println("Answer="+counts.take(10).foreach(println))
+            
+    println("Answer="+counts.lookup(shipdate)(0))
             
             
     
