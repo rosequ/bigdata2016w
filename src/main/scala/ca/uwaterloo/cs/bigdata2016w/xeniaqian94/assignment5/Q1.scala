@@ -31,14 +31,13 @@ object Q1 extends Tokenizer {
     val args = new Conf(argv)
 
     println("hello world")
-//    BasicConfigurator.configure();
+    //    BasicConfigurator.configure();
 
     log.info("Input: " + args.input())
     log.info("Date: " + args.date())
 
-
     val conf = new SparkConf().setAppName("Q1")
-//    System.setProperty("hadoop.home.dir", "/");
+    //    System.setProperty("hadoop.home.dir", "/");
 
     val sc = new SparkContext(conf)
 
@@ -48,14 +47,19 @@ object Q1 extends Tokenizer {
     //TO DO
     val textFile = sc.textFile(args.input())
     val counts = textFile
-      .map(line => line.split("""\|""")(0))
+      //      .map(line => line.split("""\|""")(0))
+      .map(line => line)
+    //        println(tokens(10) + " " + tokens(11) + " " + tokens(12))
+    //        tokens.map(token=>(token,1))
+    //        if (tokens.length > 1) tokens.sliding(2).flatMap(p => List((p(0), p(1)), (p(0), "*"))).toList else List()
+    //      })
 
-//        println(tokens(10) + " " + tokens(11) + " " + tokens(12))
-//        tokens.map(token=>(token,1))
-//        if (tokens.length > 1) tokens.sliding(2).flatMap(p => List((p(0), p(1)), (p(0), "*"))).toList else List()
-//      })
-      
     counts.take(10).foreach(println)
+
+    val counts2 = textFile
+      .map(line => line.split("""\|""")(1))
+    //      .map(line => line)
+    counts2.take(10).foreach(println)
     //      .map(bigram => (bigram, 1))
     //      .reduceByKey(_ + _)
     //      .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
