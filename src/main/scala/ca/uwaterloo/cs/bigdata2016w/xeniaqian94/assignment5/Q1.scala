@@ -46,11 +46,15 @@ object Q1 extends Tokenizer {
 
     //TO DO
     val textFile = sc.textFile(args.input()+"/lineitem.tbl")
+    val shipdate=args.date()
     val counts = textFile
             .map(line => line.split("""\|""")(10))
-            .filter(_.substring(0,args.date().length())==args.date())
+            .filter(_.substring(0,shipdate.length())==shipdate)
             .map(date=>("count",1))
             .reduceByKey(_ + _)
+            
+            
+            
     println("Answer="+counts.count())
             
             
