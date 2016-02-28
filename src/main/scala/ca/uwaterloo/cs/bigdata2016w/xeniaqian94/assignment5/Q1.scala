@@ -48,7 +48,7 @@ object Q1 extends Tokenizer {
     //TO DO
     val textFile = sc.textFile(args.input())
     val counts = textFile
-      .map(line => line.split("""\|""")(10))
+      .map(line => line.split("""\|""")(0))
 
 //        println(tokens(10) + " " + tokens(11) + " " + tokens(12))
 //        tokens.map(token=>(token,1))
