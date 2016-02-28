@@ -48,7 +48,13 @@ object Q1 extends Tokenizer {
     val textFile = sc.textFile(args.input()+"/lineitem.tbl")
     val counts = textFile
             .map(line => line.split("""\|""")(10))
-    counts.take(10).foreach(println)
+            .filter{date=>date.substring(0,args.date().length())==args.date()}
+            .map(date=>("count",1))
+            .reduceByKey(_ + _)
+    println("Answer="+counts.count())
+            
+            
+    
 
    
     //      .map(bigram => (bigram, 1))
