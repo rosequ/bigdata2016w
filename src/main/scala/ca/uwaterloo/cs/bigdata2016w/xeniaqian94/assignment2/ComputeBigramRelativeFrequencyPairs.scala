@@ -32,6 +32,7 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
 
   def main(argv: Array[String]) {
     val args = new Conf(argv)
+    BasicConfigurator.configure();
 
     log.info("Input: " + args.input())
     log.info("Output: " + args.output())
@@ -47,6 +48,7 @@ object ComputeBigramRelativeFrequencyPairs extends Tokenizer {
     val textFile = sc.textFile(args.input(),args.reducers())
     val counts = textFile
       .flatMap(line => {
+        println(line)
         val tokens = tokenize(line)
         if (tokens.length > 1) tokens.sliding(2).flatMap(p => List((p(0),p(1)),(p(0),"*"))).toList else List()
       })
