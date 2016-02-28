@@ -30,11 +30,11 @@ object Q1 extends Tokenizer {
   def main(argv: Array[String]) {
     val args = new Conf(argv)
 
-    BasicConfigurator.configure();
+//    BasicConfigurator.configure();
 
     log.info("Input: " + args.input())
     log.info("Date: " + args.date())
-    println("hello world")
+//    println("hello world")
 
     val conf = new SparkConf().setAppName("Q1")
     System.setProperty("hadoop.home.dir", "/");
@@ -49,10 +49,8 @@ object Q1 extends Tokenizer {
     val counts = textFile
       .flatMap(line => {
         val tokens = line.split("|").toList
-        
-        log.info("hello world")
-        log.info(tokens(10) + " " + tokens(11) + " " + tokens(12))
-        
+
+        println(tokens(10) + " " + tokens(11) + " " + tokens(12))
         tokens.toIterator
 //        if (tokens.length > 1) tokens.sliding(2).flatMap(p => List((p(0), p(1)), (p(0), "*"))).toList else List()
       })
