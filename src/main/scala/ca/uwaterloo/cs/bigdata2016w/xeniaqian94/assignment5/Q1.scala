@@ -23,12 +23,13 @@ class MyPartitioner(numOfPar: Int) extends Partitioner {
 }
 
 object Q1 extends Tokenizer{
-  
+  val log = Logger.getLogger(getClass().getName())
  
 
   def main(argv: Array[String]) {
     val args = new Conf(argv)
-    val log = Logger.getLogger(getClass().getName())
+    
+    BasicConfigurator.configure();
 
     log.info("Input: " + args.input())
     log.info("Date: " + args.date())
