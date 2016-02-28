@@ -50,12 +50,12 @@ object Q1 extends Tokenizer {
     val counts = textFile
             .map(line => line.split("""\|""")(10))
             .filter(_.substring(0,shipdate.length())==shipdate)
-            .map(date=>("count",1))
+            .map(date=>(date,1))
             .reduceByKey(_ + _)
             
             
             
-    println("Answer="+counts.count())
+    println("Answer="+counts.take(10).foreach(println))
             
             
     
