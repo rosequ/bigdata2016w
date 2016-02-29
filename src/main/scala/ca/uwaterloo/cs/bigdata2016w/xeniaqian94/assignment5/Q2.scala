@@ -11,7 +11,6 @@ import org.apache.spark.Partitioner
 import java.util.StringTokenizer
 import scala.collection.JavaConverters._
 
-
 object Q2 extends Tokenizer {
   val log = Logger.getLogger(getClass().getName())
 
@@ -33,23 +32,30 @@ object Q2 extends Tokenizer {
     //    FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
     //TO DO
-    val textFile = sc.textFile(args.input()+"/lineitem.tbl")
-    val shipdate=args.date()
-    val counts = textFile
-            .map(line => line.split("""\|""")(10))
-            .filter(_.substring(0,shipdate.length())==shipdate)
-            .map(date=>("count",1))
-            .reduceByKey(_ + _)
-            
-            
-            
-            
-    println("ANSWER="+counts.lookup("count")(0))
-            
-            
-    
+//    val lineitemTextFile = sc.textFile(args.input() + "/lineitem.tbl")
+//    val ordersTextFile = sc.textFile(args.input() + "/orders.tbl")
+    val shipdate = args.date()
 
-   
+//    val counts = ordersTextFile
+//      .map(line => (line.split("""\|""")(0), line.split("""\|""")(10)))
+//      .filter(_._2.substring(0, shipdate.length()) == shipdate)
+
+    val lineitem = sc.textFile(args.input() + "/lineitem.tbl")
+      .map(line => (line.split("""\|""")(0), line.split("""\|""")(10)))
+      .filter(_._2.substring(0, shipdate.length()) == shipdate)
+    val order = sc.textFile(args.input() + "/orders.tbl")
+      .map(line => (line.split("""\|""")(0), line.split("""\|""")(6)))
+    
+      
+    val orderitem=order.cogroup(lineitem)
+    .filter(_._2._2.size!=0)
+    .map(pair=>(pair._2._1.head,pair._1))
+    .sortByKey()
+    .take(20)
+    .map(pair=>(pair._2,pair._1))          
+
+   orderitem.foreach(println)
+
     //      .map(bigram => (bigram, 1))
     //      .reduceByKey(_ + _)
     //      .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
