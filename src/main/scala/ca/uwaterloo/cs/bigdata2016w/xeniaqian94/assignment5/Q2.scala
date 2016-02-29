@@ -49,6 +49,7 @@ object Q2 extends Tokenizer {
       
     val orderitem=order.cogroup(lineitem)
     .filter(_._2._2.size!=0)
+    .map(pair=>(pair._1,pair._2._1.head))
     .sortByKey(true)
     .take(20)
     .map(pair=>(pair._2,pair._1))
