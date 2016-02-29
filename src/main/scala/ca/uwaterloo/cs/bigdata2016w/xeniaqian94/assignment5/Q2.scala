@@ -49,12 +49,14 @@ object Q2 extends Tokenizer {
       
     val orderitem=order.cogroup(lineitem)
     .filter(_._2._2.size!=0)
-    .map(pair=>(pair._2._1.head,pair._1))
     .sortByKey(true)
+    .take(20)
+    .map(pair=>(pair._2,pair._1))
+    
     
          
 
-   orderitem.take(20)foreach(pair=>println(pair._2,pair._1))
+   orderitem.foreach(println)
 
     //      .map(bigram => (bigram, 1))
     //      .reduceByKey(_ + _)
