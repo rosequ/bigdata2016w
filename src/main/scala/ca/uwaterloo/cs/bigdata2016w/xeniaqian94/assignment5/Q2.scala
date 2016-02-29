@@ -11,20 +11,8 @@ import org.apache.spark.Partitioner
 import java.util.StringTokenizer
 import scala.collection.JavaConverters._
 
-class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
-  mainOptions = Seq(input, date)
-  val input = opt[String](descr = "input path", required = true)
-  val date = opt[String](descr = "shipdate", required = true)
-}
-class MyPartitioner(numOfPar: Int) extends Partitioner {
-  def numPartitions: Int = numOfPar
-  def getPartition(key: Any): Int = {
-    val k = key.asInstanceOf[(String, String)]
-    ((k._1.hashCode() & Integer.MAX_VALUE) % numPartitions)
-  }
-}
 
-object Q1 extends Tokenizer {
+object Q2 extends Tokenizer {
   val log = Logger.getLogger(getClass().getName())
 
   def main(argv: Array[String]) {
@@ -52,8 +40,34 @@ object Q1 extends Tokenizer {
             .filter(_.substring(0,shipdate.length())==shipdate)
             .map(date=>("count",1))
             .reduceByKey(_ + _)
-       
+            
+            
+            
+            
     println("ANSWER="+counts.lookup("count")(0))
+            
+            
+    
+
+   
+    //      .map(bigram => (bigram, 1))
+    //      .reduceByKey(_ + _)
+    //      .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
+    //      .mapPartitions(iter=>{
+    //        var marginal=1
+    //        var freq=List[((String,String),Float)]()
+    //        while (iter.hasNext){
+    //          val x=iter.next;
+    //          if (x._1._2.equals("*"))
+    //            marginal=x._2 
+    //          else
+    //            freq=freq.::((x._1,(1.0f*x._2/marginal)))
+    //        }
+    //        log.info("Freq.length="+freq.length)
+    //        freq.toIterator
+    //      })
+    //      .cache//      .sortByKey()
+    //      .saveAsTextFile(args.output())
 
   }
 
