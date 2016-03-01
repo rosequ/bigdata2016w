@@ -67,6 +67,7 @@ object Q3 extends Tokenizer {
     lineitem.foreach{pair=>
       pair match{
         case (orderkey,(Some(partkey),Some(suppkey))) => println("("+orderkey+","+partkey+","+suppkey+")")
+        case _ =>  println()
       }
     }
       
