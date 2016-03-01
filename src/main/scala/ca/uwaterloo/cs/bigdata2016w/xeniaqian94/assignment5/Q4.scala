@@ -28,17 +28,8 @@ object Q4 extends Tokenizer {
 
     val sc = new SparkContext(conf)
 
-    //    val outputDir = new Path(args.output())
-    //    FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
-
-    //TO DO
-    //    val lineitemTextFile = sc.textFile(args.input() + "/lineitem.tbl")
-    //    val ordersTextFile = sc.textFile(args.input() + "/orders.tbl")
     val shipdate = args.date()
 
-    //    val counts = ordersTextFile
-    //      .map(line => (line.split("""\|""")(0), line.split("""\|""")(10)))
-    //      .filter(_._2.substring(0, shipdate.length()) == shipdate)
     val customer = sc.textFile(args.input() + "/customer.tbl")
       .map(line => (line.split("""\|""")(0), line.split("""\|""")(3)))
     val customerBroadcast = sc.broadcast(customer.collectAsMap())
@@ -70,19 +61,19 @@ object Q4 extends Tokenizer {
             (nationkey.toInt, count)
           }
         }
-        
+
       }
-      .map(pair=>(pair._1.toInt,pair._2))
-      .sortByKey(true,1)
-      .foreach(println)
-      
-      
-//      nationTable.get(nationkey)
-//    linenation.foreach(println)
-//    linenation.foreach { pair =>
-//      println("(" + pair._1 + "," + pair._2._1 + "," + pair._2._2 + ")")
-//
-//    }
+      .map(pair => (pair._1.toInt, pair._2))
+      .sortByKey(true, 1)
+
+    val nationTable = nationBroadcast.value
+    linenation.foreach { pair =>
+      {
+        nationTable.get(pair._1.toString()) match {
+          case (Some(nationname)) => println("(" + pair._1 + "," + nationname + "," + pair._2 + ")")
+        }
+      }
+    }
   }
 
 }
