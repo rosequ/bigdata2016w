@@ -74,6 +74,7 @@ object Q4 extends Tokenizer {
         }
       }
     }
+    linenation.foreach(println)
   }
 
 }
