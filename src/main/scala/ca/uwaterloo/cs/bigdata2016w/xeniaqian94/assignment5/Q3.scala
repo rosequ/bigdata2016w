@@ -54,7 +54,7 @@ object Q3 extends Tokenizer {
       .map(line => (line, line.split("""\|""")(10)))
       .filter(_._2.substring(0, shipdate.length()) == shipdate)
       .map(pair => {
-        val orderkey=pair._1.split("""\|""")(1)
+        val orderkey=pair._1.split("""\|""")(0)
         val partkey=pair._1.split("""\|""")(1)
         val suppkey=pair._1.split("""\|""")(2)
         val partTable=partBroadcast.value
