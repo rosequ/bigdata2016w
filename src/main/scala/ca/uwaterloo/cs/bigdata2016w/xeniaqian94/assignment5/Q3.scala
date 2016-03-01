@@ -70,40 +70,6 @@ object Q3 extends Tokenizer {
         case _ =>  println()
       }
     }
-      
-      
-      
-      
-//    val order = sc.textFile(args.input() + "/orders.tbl")
-//      .map(line => (line.split("""\|""")(0), line.split("""\|""")(6)))
-//
-//    val orderitem = order.cogroup(lineitem)
-//      .filter(_._2._2.size != 0)
-//      .map(pair => (pair._1.toLong, pair._2._1.head))
-//      .sortByKey(true)
-//      .take(20)
-//      .map(pair => (pair._2, pair._1))
-//
-//    orderitem.foreach(println)
-
-    //      .map(bigram => (bigram, 1))
-    //      .reduceByKey(_ + _)
-    //      .repartitionAndSortWithinPartitions(new MyPartitioner(args.reducers()))
-    //      .mapPartitions(iter=>{
-    //        var marginal=1
-    //        var freq=List[((String,String),Float)]()
-    //        while (iter.hasNext){
-    //          val x=iter.next;
-    //          if (x._1._2.equals("*"))
-    //            marginal=x._2 
-    //          else
-    //            freq=freq.::((x._1,(1.0f*x._2/marginal)))
-    //        }
-    //        log.info("Freq.length="+freq.length)
-    //        freq.toIterator
-    //      })
-    //      .cache//      .sortByKey()
-    //      .saveAsTextFile(args.output())
 
   }
 
