@@ -67,13 +67,16 @@ object Q4 extends Tokenizer {
         pair match {
           case (Some(nationkey), count) => {
             val nationTable = nationBroadcast.value
-            (nationkey.toInt, (nationTable.get(nationkey), count))
+            (nationkey.toInt, count)
           }
         }
       }
+      .map(pair=>pair)
       .sortByKey(true)
       .foreach(println)
       
+      
+//      nationTable.get(nationkey)
 //    linenation.foreach(println)
 //    linenation.foreach { pair =>
 //      println("(" + pair._1 + "," + pair._2._1 + "," + pair._2._2 + ")")
