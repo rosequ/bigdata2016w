@@ -76,7 +76,7 @@ object Q4 extends Tokenizer {
         })
       .sortByKey(true, 1)
     println("hello world")
-    println(linenation.take(5))
+    println(linenation.take(5).head)
 
 //    linenation.foreach { pair =>
 //      {
