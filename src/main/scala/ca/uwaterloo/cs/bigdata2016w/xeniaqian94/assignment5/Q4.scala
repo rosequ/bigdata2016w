@@ -63,17 +63,29 @@ object Q4 extends Tokenizer {
         }
 
       }
-      .map(pair => (pair._1.toInt, pair._2))
-      .sortByKey(true, 1)
+      //      .map(pair => (pair._1.toInt, pair._2))
+      .map(pair =>
+        {
+          val nationTable = nationBroadcast.value
+          nationTable.get(pair._1.toString()) match {
+            case (Some(nationname)) =>
+              println("(" + pair._1 + "," + nationname + "," + pair._2 + ")")
+              (pair._1, (nationname, pair._2))
+          }
 
-    val nationTable = nationBroadcast.value
-    linenation.foreach { pair =>
-      {
-        nationTable.get(pair._1.toString()) match {
-          case (Some(nationname)) => println("(" + pair._1 + "," + nationname + "," + pair._2 + ")")
-        }
-      }
-    }
+        })
+      .sortByKey(true, 1)
+    println("hello world")
+    println(linenation.take(5))
+
+//    linenation.foreach { pair =>
+//      {
+//        val nationTable = nationBroadcast.value
+//        nationTable.get(pair._1.toString()) match {
+//          case (Some(nationname)) => println("(" + pair._1 + "," + nationname + "," + pair._2 + ")")
+//        }
+//      }
+//    }
     linenation.foreach(println)
   }
 
