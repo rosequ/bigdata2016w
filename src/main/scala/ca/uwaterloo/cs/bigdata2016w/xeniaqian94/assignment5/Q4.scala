@@ -69,14 +69,14 @@ object Q4 extends Tokenizer {
           val nationTable = nationBroadcast.value
           nationTable.get(pair._1.toString()) match {
             case (Some(nationname)) =>
-              println("(" + pair._1 + "," + nationname + "," + pair._2 + ")")
               (pair._1, (nationname, pair._2))
           }
 
         })
       .sortByKey(true, 1)
     println("hello world")
-    println(linenation.take(5).head)
+    
+    
 
 //    linenation.foreach { pair =>
 //      {
@@ -86,7 +86,7 @@ object Q4 extends Tokenizer {
 //        }
 //      }
 //    }
-    linenation.foreach(println)
+    linenation.collect().foreach(println)
   }
 
 }
