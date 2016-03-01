@@ -65,22 +65,18 @@ object Q4 extends Tokenizer {
       .reduceByKey(_ + _)
       .map { pair =>
         pair match {
-          case (Some(nationkey), count) => (nationkey.toLong, count)
+          case (Some(nationkey), count) => {
+            val nationTable = nationBroadcast.value
+            (nationkey.toLong, (nationTable.get(nationkey), count))
+          }
         }
       }
       .sortByKey(true)
 
     val nationTable = nationBroadcast.value
     linenation.foreach { pair =>
-      {
-        val nationkey = pair._1.toString()
-        nationTable.get(nationkey) match {
-          case (Some(nationname)) => {
-            println("(" + nationkey + "," + nationname + "," + pair._2 + ")")
-          }
-          case _ => println()
-        }
-      }
+      println("(" + pair._1 + "," + pair._2._1 + "," + pair._2._2 + ")")
+
     }
   }
 
