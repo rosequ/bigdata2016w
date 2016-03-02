@@ -21,7 +21,7 @@ object Q5 extends Tokenizer {
     //    BasicConfigurator.configure();
 
     log.info("Input: " + args.input())
-    log.info("Date: " + args.date())
+//    log.info("Date: " + args.date())
 
     val conf = new SparkConf().setAppName("Q5")
     //    System.setProperty("hadoop.home.dir", "/");
