@@ -28,7 +28,7 @@ object Q5 extends Tokenizer {
 
     val sc = new SparkContext(conf)
 
-    val shipdate = args.date()
+//    val shipdate = args.date()
 
     val customer = sc.textFile(args.input() + "/customer.tbl")
       .map(line => (line.split("""\|""")(0), line.split("""\|""")(3).toInt))
