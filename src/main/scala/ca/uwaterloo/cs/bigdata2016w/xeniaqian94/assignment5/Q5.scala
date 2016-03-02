@@ -51,6 +51,7 @@ object Q5 extends Tokenizer {
     val lineitem = sc.textFile(args.input() + "/lineitem.tbl")
       .map(line => (line.split("""\|""")(0), line.split("""\|""")(10).substring(0, 7)))
       .cogroup(order)
+      .filter(_._2._2.size != 0)
       .flatMap { pair =>
         {
           val shipdateList = pair._2._1.toList
