@@ -47,6 +47,7 @@ object Q6 extends Tokenizer {
         
       })
       .reduceByKey((a, b) => (a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4,a._5+b._5,a._6+b._6))
+      .sortByKey(true)
       .map(pair=>{
         val key=pair._1
         val sum_qty=pair._2._1
@@ -57,54 +58,11 @@ object Q6 extends Tokenizer {
         val avg_qty=sum_qty.toDouble/count_order
         val avg_price=sum_base_price/count_order
         val avg_disc=pair._2._5/count_order
-        (key._1,key._2,sum_qty,sum_base_price,sum_disc_price,sum_charge,avg_qty,avg_price,avg_disc)
+        (key._1,key._2,sum_qty,sum_base_price,sum_disc_price,sum_charge,avg_qty,avg_price,avg_disc,count_order)
       })
       
       lineitem.collect().foreach(println)
       
-      
-
-//    val customer = sc.textFile(args.input() + "/customer.tbl")
-//      .map(line => (line.split("""\|""")(0), line.split("""\|""")(3).toInt))
-//    val customerBroadcast = sc.broadcast(customer.collectAsMap())
-//
-//    val order = sc.textFile(args.input() + "/orders.tbl")
-//      .map(line => (line.split("""\|""")(0), line.split("""\|""")(1)))
-//      .map { pair =>
-//        {
-//          val customerTable = customerBroadcast.value
-//          customerTable.get(pair._2) match {
-//            case (Some(nationkey)) => (pair._1, nationkey)
-//          }
-//        }
-//      }
-//      .filter {
-//        pair => (pair._2 == 3 | pair._2 == 24)
-//      }
-//
-//    val lineitem = sc.textFile(args.input() + "/lineitem.tbl")
-//      .map(line => (line.split("""\|""")(0), line.split("""\|""")(10).substring(0, 7)))
-//      .cogroup(order)
-//      .filter(_._2._2.size != 0)
-//      .flatMap { pair =>
-//        {
-//          val shipdateList = pair._2._1.toList
-//          val nationkey = pair._2._2.head
-//          shipdateList.map(shipdate => ((shipdate, nationkey), 1)).toList
-//        }
-//      }
-//      .reduceByKey(_ + _)
-//      .sortByKey(true)
-//    
-//    println("hello world 2")
-//    lineitem.collect().foreach(pair =>
-//      println("(" + pair._1._1 + "," + pair._1._2 + "," + pair._2 + ")"))
-//    println("print in excel exported form")
-//    lineitem.collect().foreach(pair=>println(pair._1._1 + "	" + pair._1._2 +"	" + pair._2))
-
-//    lineitem.collect().foreach { pair =>
-//      println("(" + pair._1 + "," + pair._2._1 + "," + pair._2._2 + ")")
-//  }
   }
 
 }
