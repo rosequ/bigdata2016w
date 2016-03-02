@@ -76,7 +76,7 @@ object Q7 extends Tokenizer {
       .sortByKey(false)
       .map(pair => (pair._2._1, pair._2._2, pair._1, pair._2._3, pair._2._4))
 
-    shippingpriority.collect().foreach(println)
+    shippingpriority.collect().take(10).foreach(println)
 
   }
 
