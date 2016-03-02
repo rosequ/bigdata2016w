@@ -34,7 +34,7 @@ object Q6 extends Tokenizer {
       .map(line => (line, line.split("""\|""")(10)))
       .filter(_._2.substring(0, shipdate.length()) == shipdate)
       .map(line=>{
-        val attribute=line._2.split("""\|""")
+        val attribute=line._1.split("""\|""")
         val returnflag=attribute(8)
         val linestatus=attribute(9)
         val quantity=attribute(4).toLong
