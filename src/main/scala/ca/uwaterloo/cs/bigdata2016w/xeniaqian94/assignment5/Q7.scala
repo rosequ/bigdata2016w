@@ -70,11 +70,11 @@ object Q7 extends Tokenizer {
         val revenue = pair._2._1.head
         val orderdate = pair._2._2.head._2
         val shippriority = pair._2._2.head._3
-        (revenue, (name, orderkey, revenue, orderdate, shippriority))
+        (revenue, (name, orderkey, orderdate, shippriority))
 
       })
       .sortByKey(false)
-      .map(pair => (pair._2._1, pair._2._2, pair._1, pair._2._3, pair._2._4, pair._2._5))
+      .map(pair => (pair._2._1, pair._2._2, pair._1, pair._2._3, pair._2._4))
 
     shippingpriority.collect().foreach(println)
 
