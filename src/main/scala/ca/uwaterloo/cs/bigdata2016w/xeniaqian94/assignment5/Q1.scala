@@ -14,7 +14,7 @@ import scala.collection.JavaConverters._
 class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   mainOptions = Seq(input, date)
   val input = opt[String](descr = "input path", required = true)
-  val date = opt[String](descr = "shipdate", required = true)
+  val date = opt[String](descr = "shipdate", required = false)
 }
 class MyPartitioner(numOfPar: Int) extends Partitioner {
   def numPartitions: Int = numOfPar
