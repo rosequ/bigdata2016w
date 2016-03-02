@@ -65,6 +65,8 @@ object Q5 extends Tokenizer {
     println("hello world 2")
     lineitem.collect().foreach(pair =>
       println("(" + pair._1._1 + "," + pair._1._2 + "," + pair._2 + ")"))
+    println("print in excel exported form")
+    lineitem.collect().foreach(pair=>println(pair._1._1 + "	" + pair._1._2 +"	" + pair._2))
 
 //    lineitem.collect().foreach { pair =>
 //      println("(" + pair._1 + "," + pair._2._1 + "," + pair._2._2 + ")")
