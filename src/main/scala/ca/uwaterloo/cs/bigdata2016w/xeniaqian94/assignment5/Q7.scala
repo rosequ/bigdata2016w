@@ -23,7 +23,7 @@ object Q7 extends Tokenizer {
     log.info("Input: " + args.input())
     log.info("Date: " + args.date())
 
-    val conf = new SparkConf().setAppName("Q6")
+    val conf = new SparkConf().setAppName("Q7")
     //    System.setProperty("hadoop.home.dir", "/");
 
     val sc = new SparkContext(conf)
