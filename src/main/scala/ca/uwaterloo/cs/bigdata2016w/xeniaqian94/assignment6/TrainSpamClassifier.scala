@@ -50,7 +50,7 @@ object TrainSpamClassifier extends Tokenizer {
       val features=instanceArray.slice(2,instanceArray.length)
       // Parse input
     // ..
-      (0, (docid, isSpam, features))
+      (0, (docid, isSpam, features(0),features(features.length)))
   }).groupByKey(1)
   // Then run the trainer...
 
