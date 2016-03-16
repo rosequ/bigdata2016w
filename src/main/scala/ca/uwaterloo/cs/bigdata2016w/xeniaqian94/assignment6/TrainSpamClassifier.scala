@@ -64,21 +64,36 @@ object TrainSpamClassifier extends Tokenizer {
 
     // w is the weight vector (make sure the variable is within scope) size=1000091 
     var w = Map[Int, Double]()
-
+    var old_w=Map[Int,Double]()
+    
     // This is the main learner:
     val delta = 0.002
     var converged = false
     var i = 1
     val numIterations = 10000
+    val threshold=1E-8
 
     def spamminess(features: Array[Int]): Double = {
       var score = 0d
       features.foreach(f => if (w.contains(f)) score += w(f))
       score
     }
+    def isConverged(previousWeights: Map[Int, Double],
+      currentWeights: Map[Int, Double],
+      threshold: Double): Boolean = {
+      // To compare with convergence tolerance.
+      var flag=true
+      previousWeights.foreach(pair=>{
+        if (currentWeights.contains(pair._1)&&(currentWeights(pair._1)-pair._2)>threshold)
+          flag=false
+      })
+      flag
+  }
+
 
     while (!converged && i < numIterations) {
       //      var currentWeights=trained.context.broadcast(w)
+      old_w=w
       trained.collect().foreach(instanceIterable => {
         instanceIterable._2.foreach(tuple => {
           val isSpam = tuple._2
@@ -87,17 +102,17 @@ object TrainSpamClassifier extends Tokenizer {
           val prob = 1.0 / (1 + exp(-score))
           features.foreach(f => {
             if (w.contains(f)) {
-              w updated (f, w(f) + (isSpam - prob) * delta)
+              w=w updated (f, w(f) + (isSpam - prob) * delta)
               //        w(f) = w(f)+(isSpam - prob) * delta
             } else {
-              w updated (f, (isSpam - prob) * delta)
+              w=w updated (f, (isSpam - prob) * delta)
               //        w(f) = (isSpam - prob) * delta
             }
           })
 
         })
-
       })
+      converged=isConverged(old_w,w,threshold)
       i += 1
     }
     // Scores a document based on its list of features.
