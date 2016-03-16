@@ -1,3 +1,5 @@
 target/*
 *.class
 /target/
+spam.test.qrels.txt
+spam.train.britney.txt
