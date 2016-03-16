@@ -59,6 +59,7 @@ object TrainSpamClassifier extends Tokenizer {
       // ..
       (0, (docid, isSpam, features))
     }).groupByKey(1)
+    .persist()
     
     
 
@@ -115,8 +116,10 @@ object TrainSpamClassifier extends Tokenizer {
       converged=isConverged(old_w,w,threshold)
       i += 1
     }
+    
     // Scores a document based on its list of features.
     val model=sc.parallelize(w.toSeq)
+    println("finished training, this model has "+model.count().toString())
     model.saveAsTextFile(args.model());
 
   }
