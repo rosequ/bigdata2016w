@@ -33,6 +33,9 @@ object TrainSpamClassifier extends Tokenizer {
     println("hello world")
     log.info("Input: " + args.input())
     log.info("Model: " + args.model())
+    
+    val outputDir = new Path(args.model())
+    FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
     val conf = new SparkConf().setAppName("TrainSpamClassifier")
     //    System.setProperty("hadoop.home.dir", "/");
@@ -50,7 +53,7 @@ object TrainSpamClassifier extends Tokenizer {
       val features=instanceArray.slice(2,instanceArray.length)
       // Parse input
     // ..
-      (0, (docid, isSpam, features(0),features(features.length)))
+      (0, (docid, isSpam, features(0),features(features.length-1)))
   }).groupByKey(1)
   // Then run the trainer...
 
