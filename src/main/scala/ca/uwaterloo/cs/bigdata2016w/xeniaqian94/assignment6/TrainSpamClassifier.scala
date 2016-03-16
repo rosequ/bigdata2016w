@@ -118,7 +118,7 @@ object TrainSpamClassifier extends Tokenizer {
     }
     
     // Scores a document based on its list of features.
-    val model=sc.parallelize(w.toSeq)
+    val model=sc.parallelize(w.toSeq,1)
     println("finished training, this model has "+model.count().toString())
     model.saveAsTextFile(args.model());
 
