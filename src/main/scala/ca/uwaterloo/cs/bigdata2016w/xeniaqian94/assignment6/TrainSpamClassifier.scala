@@ -10,6 +10,7 @@ import org.rogach.scallop._
 import org.apache.spark.Partitioner
 import java.util.StringTokenizer
 import scala.collection.JavaConverters._
+import scala.math._
 
 class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   mainOptions = Seq(input, model)
@@ -47,54 +48,61 @@ object TrainSpamClassifier extends Tokenizer {
     val textFile = sc.textFile(args.input());
 
     val trained = textFile.map(line => {
-      val instanceArray = line.split(" ").toArray
+      val instanceArray = line.split(" ")
       val docid = instanceArray(0)
-      val isSpam = instanceArray(1)
-      val features = instanceArray.slice(2, instanceArray.length)
+      var isSpam = 0
+      if (instanceArray(1).equals("spam")) {
+        isSpam = 1
+      }
+      val features = instanceArray.slice(2, instanceArray.length).map { featureIndex => featureIndex.toInt }
       // Parse input
       // ..
-      (0, (docid, isSpam, features(0), features(features.length - 1)))
+      (0, (docid, isSpam, features))
     }).groupByKey(1)
-    // Then run the trainer...
+    
+    
 
-    trained.saveAsTextFile(args.model());
+    // w is the weight vector (make sure the variable is within scope) size=1000091 
+    var w = Map[Int, Double]()
 
-    //// w is the weight vector (make sure the variable is within scope)
-    //val w = Map[Int, Double]()
-    //
-    //// Scores a document based on its list of features.
-    //def spamminess(features: Array[Int]) : Double = {
-    //  var score = 0d
-    //  features.foreach(f => if (w.contains(f)) score += w(f))
-    //  score
-    //}
-    //
-    //// This is the main learner:
-    //val delta = 0.002
-    //
-    //// For each instance...
-    //val isSpam = ...   // label
-    //val features = ... // feature vector of the training instance
-    //
-    //// Update the weights as follows:
-    //val score = spamminess(features)
-    //val prob = 1.0 / (1 + exp(-score))
-    //features.foreach(f => {
-    //  if (w.contains(f)) {
-    //    w(f) += (isSpam - prob) * delta
-    //  } else {
-    //    w(f) = (isSpam - prob) * delta
-    //   }
-    //})
-    //
-    //    val shipdate=args.date()
-    //    val counts = textFile
-    //            .map(line => line.split("""\|""")(10))
-    //            .filter(_.substring(0,shipdate.length())==shipdate)
-    //            .map(date=>("count",1))
-    //            .reduceByKey(_ + _)
-    //       
-    //    println("ANSWER="+counts.lookup("count")(0))
+    // This is the main learner:
+    val delta = 0.002
+    var converged = false
+    var i = 1
+    val numIterations = 10000
+
+    def spamminess(features: Array[Int]): Double = {
+      var score = 0d
+      features.foreach(f => if (w.contains(f)) score += w(f))
+      score
+    }
+
+    while (!converged && i < numIterations) {
+      //      var currentWeights=trained.context.broadcast(w)
+      trained.collect().foreach(instanceIterable => {
+        instanceIterable._2.foreach(tuple => {
+          val isSpam = tuple._2
+          val features = tuple._3
+          val score = spamminess(features)
+          val prob = 1.0 / (1 + exp(-score))
+          features.foreach(f => {
+            if (w.contains(f)) {
+              w updated (f, w(f) + (isSpam - prob) * delta)
+              //        w(f) = w(f)+(isSpam - prob) * delta
+            } else {
+              w updated (f, (isSpam - prob) * delta)
+              //        w(f) = (isSpam - prob) * delta
+            }
+          })
+
+        })
+
+      })
+      i += 1
+    }
+    // Scores a document based on its list of features.
+    val model=sc.parallelize(w.toSeq)
+    model.saveAsTextFile(args.model());
 
   }
 
