@@ -16,14 +16,14 @@ class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   val input = opt[String](descr = "input path", required = true)
   val model = opt[String](descr = "model path", required = false)
 }
-class MyPartitioner(numOfPar: Int) extends Partitioner {
-  
-//  def numPartitions: Int = numOfPar
-//  def getPartition(key: Any): Int = {
-//    val k = key.asInstanceOf[(String, String)]
-//    ((k._1.hashCode() & Integer.MAX_VALUE) % numPartitions)
-//  }
-}
+//class MyPartitioner(numOfPar: Int) extends Partitioner {
+//  
+////  def numPartitions: Int = numOfPar
+////  def getPartition(key: Any): Int = {
+////    val k = key.asInstanceOf[(String, String)]
+////    ((k._1.hashCode() & Integer.MAX_VALUE) % numPartitions)
+////  }
+//}
 
 object TrainSpamClassifier extends Tokenizer {
   val log = Logger.getLogger(getClass().getName())
