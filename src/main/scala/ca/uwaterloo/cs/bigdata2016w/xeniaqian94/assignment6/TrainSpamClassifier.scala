@@ -33,69 +33,68 @@ object TrainSpamClassifier extends Tokenizer {
     println("hello world")
     log.info("Input: " + args.input())
     log.info("Model: " + args.model())
-    
+    val conf = new SparkConf().setAppName("TrainSpamClassifier")
+    val sc = new SparkContext(conf)
+
     val outputDir = new Path(args.model())
     FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
-    val conf = new SparkConf().setAppName("TrainSpamClassifier")
     //    System.setProperty("hadoop.home.dir", "/");
-    val sc = new SparkContext(conf)
     //    val outputDir = new Path(args.output())
     //    FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
     //TO DO
     val textFile = sc.textFile(args.input());
 
-    val trained = textFile.map(line =>{
-      val instanceArray=line.split(" ").toArray
-      val docid=instanceArray(0)
-      val isSpam=instanceArray(1)
-      val features=instanceArray.slice(2,instanceArray.length)
+    val trained = textFile.map(line => {
+      val instanceArray = line.split(" ").toArray
+      val docid = instanceArray(0)
+      val isSpam = instanceArray(1)
+      val features = instanceArray.slice(2, instanceArray.length)
       // Parse input
-    // ..
-      (0, (docid, isSpam, features(0),features(features.length-1)))
-  }).groupByKey(1)
-  // Then run the trainer...
+      // ..
+      (0, (docid, isSpam, features(0), features(features.length - 1)))
+    }).groupByKey(1)
+    // Then run the trainer...
 
-  trained.saveAsTextFile(args.model());
+    trained.saveAsTextFile(args.model());
 
-
-//// w is the weight vector (make sure the variable is within scope)
-//val w = Map[Int, Double]()
-//
-//// Scores a document based on its list of features.
-//def spamminess(features: Array[Int]) : Double = {
-//  var score = 0d
-//  features.foreach(f => if (w.contains(f)) score += w(f))
-//  score
-//}
-//
-//// This is the main learner:
-//val delta = 0.002
-//
-//// For each instance...
-//val isSpam = ...   // label
-//val features = ... // feature vector of the training instance
-//
-//// Update the weights as follows:
-//val score = spamminess(features)
-//val prob = 1.0 / (1 + exp(-score))
-//features.foreach(f => {
-//  if (w.contains(f)) {
-//    w(f) += (isSpam - prob) * delta
-//  } else {
-//    w(f) = (isSpam - prob) * delta
-//   }
-//})
-//
-//    val shipdate=args.date()
-//    val counts = textFile
-//            .map(line => line.split("""\|""")(10))
-//            .filter(_.substring(0,shipdate.length())==shipdate)
-//            .map(date=>("count",1))
-//            .reduceByKey(_ + _)
-//       
-//    println("ANSWER="+counts.lookup("count")(0))
+    //// w is the weight vector (make sure the variable is within scope)
+    //val w = Map[Int, Double]()
+    //
+    //// Scores a document based on its list of features.
+    //def spamminess(features: Array[Int]) : Double = {
+    //  var score = 0d
+    //  features.foreach(f => if (w.contains(f)) score += w(f))
+    //  score
+    //}
+    //
+    //// This is the main learner:
+    //val delta = 0.002
+    //
+    //// For each instance...
+    //val isSpam = ...   // label
+    //val features = ... // feature vector of the training instance
+    //
+    //// Update the weights as follows:
+    //val score = spamminess(features)
+    //val prob = 1.0 / (1 + exp(-score))
+    //features.foreach(f => {
+    //  if (w.contains(f)) {
+    //    w(f) += (isSpam - prob) * delta
+    //  } else {
+    //    w(f) = (isSpam - prob) * delta
+    //   }
+    //})
+    //
+    //    val shipdate=args.date()
+    //    val counts = textFile
+    //            .map(line => line.split("""\|""")(10))
+    //            .filter(_.substring(0,shipdate.length())==shipdate)
+    //            .map(date=>("count",1))
+    //            .reduceByKey(_ + _)
+    //       
+    //    println("ANSWER="+counts.lookup("count")(0))
 
   }
 
