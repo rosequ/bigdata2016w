@@ -16,6 +16,8 @@ class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   mainOptions = Seq(input, model)
   val input = opt[String](descr = "input path", required = true)
   val model = opt[String](descr = "model path", required = false)
+  val output = opt[String](descr = "output path", required = false)
+  
 }
 //class MyPartitioner(numOfPar: Int) extends Partitioner {
 //  
@@ -119,7 +121,7 @@ object TrainSpamClassifier extends Tokenizer {
     
     // Scores a document based on its list of features.
     val model=sc.parallelize(w.toSeq,1)
-    println("finished training, this model has "+model.count().toString())
+    println("finished training in "+i+" iterations, this model has "+model.count().toString())
     model.saveAsTextFile(args.model());
 
   }
