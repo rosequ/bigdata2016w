@@ -97,7 +97,6 @@ object TrainSpamClassifier extends Tokenizer {
       val new_w = trained.mapPartitions(indexIterator => {
         val instanceIterable = indexIterator.next._2
         instanceIterable.foreach(tuple => {
-          println(tuple)
           val isSpam = tuple._2
           val features = tuple._3
           val score = spamminess(features)
