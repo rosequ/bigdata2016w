@@ -97,7 +97,7 @@ object TrainSpamClassifier extends Tokenizer {
     while (!converged && i < numIterations) {
       //      var currentWeights=trained.context.broadcast(w)
       old_w=w
-      trained.repartition(1).foreach(instanceIterable => {
+      trained.foreach(instanceIterable => {
         instanceIterable._2.foreach(tuple => {
           val isSpam = tuple._2
           val features = tuple._3
