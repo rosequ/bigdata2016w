@@ -29,7 +29,6 @@ object ApplySpamClassifier extends Tokenizer {
     val modelFile = sc.textFile(args.model())
     val w = modelFile.map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
 
-    def main(argv: Array[String]) {
 
       def spamminess(features: Array[Int]): Double = {
         var score = 0d
@@ -62,7 +61,7 @@ object ApplySpamClassifier extends Tokenizer {
       })
       testLabel.saveAsTextFile(args.output());
 
-    }
+    
   }
 
 }
