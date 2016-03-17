@@ -97,7 +97,7 @@ object TrainSpamClassifier extends Tokenizer {
     while (!converged && i < numIterations) {
       //      var currentWeights=trained.context.broadcast(w)
       old_w=w
-      trained.foreach(instanceIterable => {
+      trained.map(instanceIterable => {
         instanceIterable._2.foreach(tuple => {
           val isSpam = tuple._2
           val features = tuple._3
@@ -114,7 +114,30 @@ object TrainSpamClassifier extends Tokenizer {
           })
 
         })
+        instanceIterable
       })
+      
+      
+      
+//      foreach(instanceIterable => {
+//        instanceIterable._2.foreach(tuple => {
+//          val isSpam = tuple._2
+//          val features = tuple._3
+//          val score = spamminess(features)
+//          val prob = 1.0 / (1 + exp(-score))
+//          features.foreach(f => {
+//            if (w.contains(f)) {
+//              w=w updated (f, w(f) + (isSpam - prob) * delta)
+//              //        w(f) = w(f)+(isSpam - prob) * delta
+//            } else {
+//              w=w updated (f, (isSpam - prob) * delta)
+//              //        w(f) = (isSpam - prob) * delta
+//            }
+//          })
+//
+//        })
+//      })
+      
       converged=isConverged(old_w,w,threshold)
       i += 1
     }
