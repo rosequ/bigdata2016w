@@ -17,7 +17,7 @@ class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   val input = opt[String](descr = "input path", required = true)
   val model = opt[String](descr = "model path", required = false)
   val output = opt[String](descr = "output path", required = false)
-  
+
 }
 //class MyPartitioner(numOfPar: Int) extends Partitioner {
 //  
@@ -61,20 +61,18 @@ object TrainSpamClassifier extends Tokenizer {
       // ..
       (0, (docid, isSpam, features))
     }).groupByKey(1)
-    .persist()
-    
-    
+      .persist()
 
     // w is the weight vector (make sure the variable is within scope) size=1000091 
     var w = Map[Int, Double]()
-    var old_w=Map[Int,Double]()
-    
+    var old_w = Map[Int, Double]()
+
     // This is the main learner:
     val delta = 0.002
     var converged = false
     var i = 1
     val numIterations = 10000
-    val threshold=1E-8
+    val threshold = 1E-8
 
     def spamminess(features: Array[Int]): Double = {
       var score = 0d
@@ -85,18 +83,17 @@ object TrainSpamClassifier extends Tokenizer {
       currentWeights: Map[Int, Double],
       threshold: Double): Boolean = {
       // To compare with convergence tolerance.
-      var flag=true
-      previousWeights.foreach(pair=>{
-        if (currentWeights.contains(pair._1)&&(currentWeights(pair._1)-pair._2)>threshold)
-          flag=false
+      var flag = true
+      previousWeights.foreach(pair => {
+        if (currentWeights.contains(pair._1) && (currentWeights(pair._1) - pair._2) > threshold)
+          flag = false
       })
       flag
-  }
-
+    }
 
     while (!converged && i < numIterations) {
       //      var currentWeights=trained.context.broadcast(w)
-      old_w=w
+      old_w = w
       trained.map(instanceIterable => {
         instanceIterable._2.foreach(tuple => {
           val isSpam = tuple._2
@@ -105,46 +102,48 @@ object TrainSpamClassifier extends Tokenizer {
           val prob = 1.0 / (1 + exp(-score))
           features.foreach(f => {
             if (w.contains(f)) {
-              w=w updated (f, w(f) + (isSpam - prob) * delta)
+
+              w = w updated (f, w(f) + (isSpam - prob) * delta)
               //        w(f) = w(f)+(isSpam - prob) * delta
+
             } else {
-              w=w updated (f, (isSpam - prob) * delta)
+              w = w updated (f, (isSpam - prob) * delta)
               //        w(f) = (isSpam - prob) * delta
+
             }
+            println("within update w has " + w.size.toString() + " old_w has " + old_w.size)
           })
 
         })
         instanceIterable
       })
-      
-      
-      
-//      foreach(instanceIterable => {
-//        instanceIterable._2.foreach(tuple => {
-//          val isSpam = tuple._2
-//          val features = tuple._3
-//          val score = spamminess(features)
-//          val prob = 1.0 / (1 + exp(-score))
-//          features.foreach(f => {
-//            if (w.contains(f)) {
-//              w=w updated (f, w(f) + (isSpam - prob) * delta)
-//              //        w(f) = w(f)+(isSpam - prob) * delta
-//            } else {
-//              w=w updated (f, (isSpam - prob) * delta)
-//              //        w(f) = (isSpam - prob) * delta
-//            }
-//          })
-//
-//        })
-//      })
-      
-      converged=isConverged(old_w,w,threshold)
+
+      //      foreach(instanceIterable => {
+      //        instanceIterable._2.foreach(tuple => {
+      //          val isSpam = tuple._2
+      //          val features = tuple._3
+      //          val score = spamminess(features)
+      //          val prob = 1.0 / (1 + exp(-score))
+      //          features.foreach(f => {
+      //            if (w.contains(f)) {
+      //              w=w updated (f, w(f) + (isSpam - prob) * delta)
+      //              //        w(f) = w(f)+(isSpam - prob) * delta
+      //            } else {
+      //              w=w updated (f, (isSpam - prob) * delta)
+      //              //        w(f) = (isSpam - prob) * delta
+      //            }
+      //          })
+      //
+      //        })
+      //      })
+
+      converged = isConverged(old_w, w, threshold)
       i += 1
     }
-    
+
     // Scores a document based on its list of features.
-    val model=sc.parallelize(w.toSeq,1)
-    println("finished training in "+i+" iterations, this model has "+model.count().toString())
+    val model = sc.parallelize(w.toSeq, 1)
+    println("finished training in " + i + " iterations, this model has " + model.count().toString())
     model.saveAsTextFile(args.model());
 
   }
