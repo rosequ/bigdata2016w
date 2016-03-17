@@ -94,8 +94,10 @@ object TrainSpamClassifier extends Tokenizer {
     while (!converged && i < numIterations) {
       //      var currentWeights=trained.context.broadcast(w)
       old_w = w
-      trained.map(instanceIterable => {
-        instanceIterable._2.foreach(tuple => {
+      val new_w = trained.mapPartitions(indexIterator => {
+        val instanceIterable = indexIterator.next._2
+        instanceIterable.foreach(tuple => {
+          println(tuple)
           val isSpam = tuple._2
           val features = tuple._3
           val score = spamminess(features)
@@ -111,12 +113,39 @@ object TrainSpamClassifier extends Tokenizer {
               //        w(f) = (isSpam - prob) * delta
 
             }
-            println("within update w has " + w.size.toString() + " old_w has " + old_w.size)
+
           })
 
         })
-        instanceIterable
+        w.toIterator
       })
+      w = (new_w.collectAsMap.toMap)
+      println("within update w has " + w.size.toString() + " old_w has " + old_w.size+" changed? "+(old_w.size==w.size))
+
+      //      (instanceIterable => {
+      //        instanceIterable._2.foreach(tuple => {
+      //          println(tuple)
+      //          val isSpam = tuple._2
+      //          val features = tuple._3
+      //          val score = spamminess(features)
+      //          val prob = 1.0 / (1 + exp(-score))
+      //          features.foreach(f => {
+      //            if (w.contains(f)) {
+      //
+      //              w = w updated (f, w(f) + (isSpam - prob) * delta)
+      //              //        w(f) = w(f)+(isSpam - prob) * delta
+      //
+      //            } else {
+      //              w = w updated (f, (isSpam - prob) * delta)
+      //              //        w(f) = (isSpam - prob) * delta
+      //
+      //            }
+      //            println("within update w has " + w.size.toString() + " old_w has " + old_w.size)
+      //          })
+      //
+      //        })
+      //        instanceIterable
+      //      })
 
       //      foreach(instanceIterable => {
       //        instanceIterable._2.foreach(tuple => {
