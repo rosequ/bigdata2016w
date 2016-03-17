@@ -67,7 +67,7 @@ object ApplySpamClassifier extends Tokenizer {
 //      }
 //      (docid, isSpamlabel, spamScore, isSpamJudge)
 //    })
-    .repartition(20).saveAsTextFile(args.output())
+    .repartition(200).saveAsTextFile(args.output())
 
   }
 
