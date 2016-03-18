@@ -125,7 +125,7 @@ object TrainSpamClassifier extends Tokenizer {
       model.saveAsTextFile(args.model());
 
     } else if (shuffle) {
-      val r = scala.util.Random
+      
 
       val trained = sc.textFile(args.input()).map(line => {
         val instanceArray = line.split(" ")
@@ -139,6 +139,7 @@ object TrainSpamClassifier extends Tokenizer {
         // ..
         (0, (docid, isSpam, features))
       }).map(pair => {
+        val r = scala.util.Random
         (r.nextInt(), pair._2)
       })
         .sortByKey()
