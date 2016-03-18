@@ -38,7 +38,7 @@ object ApplySpamClassifier extends Tokenizer {
     
     //TO DO
 //    val textFile = sc.textFile(args.input());
-    val testLabel = sc.textFile(args.input()).repartition(200).map(line => {
+    val testLabel = sc.textFile(args.input()).map(line => {
       val instanceArray = line.split(" ")
       val docid = instanceArray(0)
       //      var isSpam = 0
