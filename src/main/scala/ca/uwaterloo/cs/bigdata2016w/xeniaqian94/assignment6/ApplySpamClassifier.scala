@@ -27,10 +27,11 @@ object ApplySpamClassifier extends Tokenizer {
     FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
     val modelFile = sc.textFile(args.model())
-    val w = modelFile.map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
-    
+    val weight = modelFile.map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
+    val broadcastWeight=sc.broadcast(weight)
     
     def spamminess(features: Array[Int]): Double = {
+      val w=broadcastWeight.value
       var score = 0d
       features.foreach(f => if (w.contains(f)) score += w(f))
       score
@@ -38,7 +39,7 @@ object ApplySpamClassifier extends Tokenizer {
     
     //TO DO
 //    val textFile = sc.textFile(args.input());
-    val testLabel = sc.textFile(args.input()).map(line => {
+    val testLabel = sc.textFile(args.input()).map(line=>{
       val instanceArray = line.split(" ")
       val docid = instanceArray(0)
       //      var isSpam = 0
@@ -50,10 +51,12 @@ object ApplySpamClassifier extends Tokenizer {
       // Parse input
       // ..
       val spamScore = spamminess(features)
+      
       var isSpamJudge = "spam"
       if (!(spamScore > 0)) {
         isSpamJudge = "ham"
       }
+      
       (docid, isSpamlabel, spamScore, isSpamJudge)
 //      (docid, isSpam, features)
     })
