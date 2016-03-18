@@ -3,3 +3,4 @@ target/*
 /target/
 spam.test.qrels.txt
 spam.train.britney.txt
+spam.train.*
