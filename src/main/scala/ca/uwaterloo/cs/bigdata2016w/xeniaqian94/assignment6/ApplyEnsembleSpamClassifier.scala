@@ -41,7 +41,7 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
     val weightBritney=modelBritney.map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
     val broadcastBritney=sc.broadcast(weightBritney)
     
-    def spamminess(features: Array[Int]): (Double,Double,Double) = {
+    def spamminess(features: Array[Int]): Array[Double] = {
       val wX=broadcastGroupX.value
       val wY=broadcastGroupY.value
       val wBritney=broadcastBritney.value
@@ -53,24 +53,9 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
         if (wY.contains(f)) scoreY += wY(f)
         if (wBritney.contains(f)) scoreBritney += wBritney(f)
       })
-      (scoreX,scoreY,scoreBritney)
+      Array(scoreX,scoreY,scoreBritney)
     }
     
-    val spamminessX = (features: Array[Int]) => {
-      val wX=broadcastGroupX.value
-//      val wY=broadcastGroupY.value
-//      val wBritney=broadcastBritney.value
-      var scoreX = 0d
-//      var scoreY = 0d
-//      var scoreBritney = 0d
-      features.foreach(f => {
-        if (wX.contains(f)) scoreX += wX(f)
-//        if (wY.contains(f)) scoreY += wY(f)
-//        if (wBritney.contains(f)) scoreBritney += wBritney(f)
-      })
-//      (scoreX,scoreY,scoreBritney)
-      scoreX
-    }
     var method="average"
     if (args.method().equals("vote")){
       method="vote"
@@ -81,8 +66,7 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
       val docid = instanceArray(0)
       val isSpamlabel = instanceArray(1)
       val features = instanceArray.slice(2, instanceArray.length).map{ featureIndex => featureIndex.toInt }
-//      val score = spamminessX(features)
-      val scoreArray = Array(spamminessX(features),spamminessX(features),spamminessX(features))
+      val scoreArray = spamminess(features)
       var spamScoreString=""
       var spamScore=0d
       if (method.equals("average")){
