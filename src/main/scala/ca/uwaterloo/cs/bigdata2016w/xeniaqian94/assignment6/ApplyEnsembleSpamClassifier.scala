@@ -29,16 +29,19 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
     val outputDir = new Path(args.output())
     FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
-    val weightGroupX = sc.textFile(args.model()+"/part-00000").map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
+    val modelGroupX = sc.textFile(args.model()+"/part-00000")
+    val weightGroupX = modelGroupX.map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
     val broadcastGroupX=sc.broadcast(weightGroupX)
     
-    val weightGroupY = sc.textFile(args.model()+"/part-00001").map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
+    val modelGroupY = sc.textFile(args.model()+"/part-00001")
+    val weightGroupY = modelGroupY.map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
     val broadcastGroupY=sc.broadcast(weightGroupY)
     
-    val weightBritney = sc.textFile(args.model()+"/part-00002").map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
+    val modelBritney = sc.textFile(args.model()+"/part-00002")
+    val weightBritney=modelBritney.map(line => (line.split("[,()]")(1).toInt, line.split("[,()]")(2).toDouble)).collectAsMap
     val broadcastBritney=sc.broadcast(weightBritney)
     
-    def spamminess(features: Array[Int]): Array[Double] = {
+    def spamminess(features: Array[Int]): (Double,Double,Double) = {
       val wX=broadcastGroupX.value
       val wY=broadcastGroupY.value
       val wBritney=broadcastBritney.value
@@ -50,7 +53,7 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
         if (wY.contains(f)) scoreY += wY(f)
         if (wBritney.contains(f)) scoreBritney += wBritney(f)
       })
-      Array(scoreX,scoreY,scoreBritney)
+      (scoreX,scoreY,scoreBritney)
     }
     
     val testLabel = sc.textFile(args.input()).map(line=>{
@@ -58,7 +61,8 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
       val docid = instanceArray(0)
       val isSpamlabel = instanceArray(1)
       val features = instanceArray.slice(2, instanceArray.length).map{ featureIndex => featureIndex.toInt }
-      val scoreArray = spamminess(features)
+      val score = spamminess(features)
+      val scoreArray = Array(score._1,score._2,score._3)
       var spamScoreString=""
       var spamScore=0d
       if (args.method().equals("average")){
