@@ -42,7 +42,7 @@ object TrainSpamClassifier extends Tokenizer {
     //    FileSystem.get(sc.hadoopConfiguration).delete(outputDir, true)
 
     //TO DO
-    val textFile = sc.textFile(args.input()).map(line => {
+    var textFile = sc.textFile(args.input()).map(line => {
       val instanceArray = line.split(" ")
       val docid = instanceArray(0)
       var isSpam = 0
@@ -55,20 +55,18 @@ object TrainSpamClassifier extends Tokenizer {
       (0, (docid, isSpam, features))
     })
 
-    var trained = textFile.groupByKey(1).persist()
-    val shuffle=args.shuffle()
-    if (shuffle){
-      val r = scala.util.Random
-      trained=textFile.map(pair=>{
-        (r.nextInt(),pair._2)
-        })
-        .sortByKey()
-        .map(pair=>(0,pair._2))
-        .groupByKey(1)
-        .persist()
+    val shuffle = args.shuffle()
+    val r = scala.util.Random
+    var trained = textFile.map(pair => {
+      (r.nextInt(), pair._2)
+    })
+      .sortByKey()
+      .map(pair => (0, pair._2))
+      .groupByKey(1).persist()
+    if (!shuffle) {
+      trained = textFile.groupByKey(1).persist()
     }
     
-
     // w is the weight vector (make sure the variable is within scope) size=1000091 
     var w = Map[Int, Double]()
     var old_w = Map[Int, Double]()
