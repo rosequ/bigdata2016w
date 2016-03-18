@@ -71,6 +71,10 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
 //      (scoreX,scoreY,scoreBritney)
       scoreX
     }
+    var method="average"
+    if (args.method().equals("vote")){
+      method="vote"
+    }
     
     val testLabel = sc.textFile(args.input()).map(line=>{
       val instanceArray = line.split(" ")
@@ -81,10 +85,10 @@ object ApplyEnsembleSpamClassifier extends Tokenizer {
       val scoreArray = Array(spamminessX(features),spamminessX(features),spamminessX(features))
       var spamScoreString=""
       var spamScore=0d
-      if (args.method().equals("average")){
+      if (method.equals("average")){
         spamScore=((scoreArray(0)+scoreArray(1)+scoreArray(2))/scoreArray.size)
         spamScoreString=spamScore.toString()
-      }else if (args.method().equals("vote")){
+      }else if (method.equals("vote")){
         val sigArray=for {score<-scoreArray} yield Math.signum(score).toInt
         spamScore=sigArray(0)+sigArray(1)+sigArray(2)
         spamScoreString=spamScore.toString()
