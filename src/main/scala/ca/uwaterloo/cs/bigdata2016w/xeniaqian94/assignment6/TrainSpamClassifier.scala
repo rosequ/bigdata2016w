@@ -15,18 +15,11 @@ import scala.math._
 class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   mainOptions = Seq(input, model)
   val input = opt[String](descr = "input path", required = true)
-  val model = opt[String](descr = "model path", required = false)
+  val model = opt[String](descr = "model path", required = true)
   val output = opt[String](descr = "output path", required = false)
+  val method = opt[String](descr = "method name", required = false)
 
 }
-//class MyPartitioner(numOfPar: Int) extends Partitioner {
-//  
-////  def numPartitions: Int = numOfPar
-////  def getPartition(key: Any): Int = {
-////    val k = key.asInstanceOf[(String, String)]
-////    ((k._1.hashCode() & Integer.MAX_VALUE) % numPartitions)
-////  }
-//}
 
 object TrainSpamClassifier extends Tokenizer {
   val log = Logger.getLogger(getClass().getName())
@@ -119,51 +112,7 @@ object TrainSpamClassifier extends Tokenizer {
         w.toIterator
       })
       w = (new_w.collectAsMap.toMap)
-      println("within update w has " + w.size.toString() + " old_w has " + old_w.size+" changed? "+(old_w.size==w.size))
-
-      //      (instanceIterable => {
-      //        instanceIterable._2.foreach(tuple => {
-      //          println(tuple)
-      //          val isSpam = tuple._2
-      //          val features = tuple._3
-      //          val score = spamminess(features)
-      //          val prob = 1.0 / (1 + exp(-score))
-      //          features.foreach(f => {
-      //            if (w.contains(f)) {
-      //
-      //              w = w updated (f, w(f) + (isSpam - prob) * delta)
-      //              //        w(f) = w(f)+(isSpam - prob) * delta
-      //
-      //            } else {
-      //              w = w updated (f, (isSpam - prob) * delta)
-      //              //        w(f) = (isSpam - prob) * delta
-      //
-      //            }
-      //            println("within update w has " + w.size.toString() + " old_w has " + old_w.size)
-      //          })
-      //
-      //        })
-      //        instanceIterable
-      //      })
-
-      //      foreach(instanceIterable => {
-      //        instanceIterable._2.foreach(tuple => {
-      //          val isSpam = tuple._2
-      //          val features = tuple._3
-      //          val score = spamminess(features)
-      //          val prob = 1.0 / (1 + exp(-score))
-      //          features.foreach(f => {
-      //            if (w.contains(f)) {
-      //              w=w updated (f, w(f) + (isSpam - prob) * delta)
-      //              //        w(f) = w(f)+(isSpam - prob) * delta
-      //            } else {
-      //              w=w updated (f, (isSpam - prob) * delta)
-      //              //        w(f) = (isSpam - prob) * delta
-      //            }
-      //          })
-      //
-      //        })
-      //      })
+      println("within update w has " + w.size.toString() + " old_w has " + old_w.size + " changed? " + (old_w.size == w.size))
 
       converged = isConverged(old_w, w, threshold)
       i += 1

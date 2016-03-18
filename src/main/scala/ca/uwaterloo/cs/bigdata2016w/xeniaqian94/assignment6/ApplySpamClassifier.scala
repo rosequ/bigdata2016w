@@ -1,7 +1,6 @@
 package ca.uwaterloo.cs.bigdata2016w.xeniaqian94.assignment6
 
 import ca.uwaterloo.cs.bigdata2016w.xeniaqian94.util.Tokenizer
-
 import org.apache.log4j._
 import org.apache.hadoop.fs._
 import org.apache.spark.SparkContext
@@ -37,39 +36,19 @@ object ApplySpamClassifier extends Tokenizer {
       score
     }
     
-    //TO DO
-//    val textFile = sc.textFile(args.input());
     val testLabel = sc.textFile(args.input()).map(line=>{
       val instanceArray = line.split(" ")
       val docid = instanceArray(0)
-      //      var isSpam = 0
-      //      if (instanceArray(1).equals("spam")) {
-      //        isSpam = 1
-      //      }
       val isSpamlabel = instanceArray(1)
       val features = instanceArray.slice(2, instanceArray.length).map{ featureIndex => featureIndex.toInt }
-      // Parse input
-      // ..
       val spamScore = spamminess(features)
       
       var isSpamJudge = "spam"
       if (!(spamScore > 0)) {
         isSpamJudge = "ham"
-      }
-      
+      } 
       (docid, isSpamlabel, spamScore, isSpamJudge)
-//      (docid, isSpam, features)
     })
-//    .map(instance => {
-//      val docid = instance._1
-//      val isSpamlabel = instance._2
-//      val spamScore = spamminess(instance._3)
-//      var isSpamJudge = "spam"
-//      if (!(spamScore > 0)) {
-//        isSpamJudge = "ham"
-//      }
-//      (docid, isSpamlabel, spamScore, isSpamJudge)
-//    })
     .saveAsTextFile(args.output())
 
   }
