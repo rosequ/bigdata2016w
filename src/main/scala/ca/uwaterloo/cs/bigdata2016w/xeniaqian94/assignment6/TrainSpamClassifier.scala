@@ -18,6 +18,7 @@ class Conf(args: Seq[String]) extends ScallopConf(args) with Tokenizer {
   val model = opt[String](descr = "model path", required = true)
   val output = opt[String](descr = "output path", required = false)
   val method = opt[String](descr = "method name", required = false)
+  val shuffle = opt[Boolean](descr = "whether shuffle", required = false)
 
 }
 
@@ -27,6 +28,7 @@ object TrainSpamClassifier extends Tokenizer {
   def main(argv: Array[String]) {
     val args = new Conf(argv)
     println("hello world")
+    println(args.shuffle())
     log.info("Input: " + args.input())
     log.info("Model: " + args.model())
     val conf = new SparkConf().setAppName("TrainSpamClassifier")
