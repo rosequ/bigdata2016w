@@ -57,8 +57,6 @@ object TrainSpamClassifier extends Tokenizer {
         (0, (docid, isSpam, features))
       }).groupByKey(1).persist()
 
-      
-
       // w is the weight vector (make sure the variable is within scope) size=1000091 
       var w = Map[Int, Double]()
       var old_w = Map[Int, Double]()
@@ -128,93 +126,92 @@ object TrainSpamClassifier extends Tokenizer {
 
     } else if (shuffle) {
       val r = scala.util.Random
-      
-        val trained = sc.textFile(args.input()).map(line => {
-          val instanceArray = line.split(" ")
-          val docid = instanceArray(0)
-          var isSpam = 0
-          if (instanceArray(1).equals("spam")) {
-            isSpam = 1
-          }
-          val features = instanceArray.slice(2, instanceArray.length).map { featureIndex => featureIndex.toInt }
-          // Parse input
-          // ..
-          (0, (docid, isSpam, features))
-        }).map(pair => {
-          (r.nextInt(), pair._2)
+
+      val trained = sc.textFile(args.input()).map(line => {
+        val instanceArray = line.split(" ")
+        val docid = instanceArray(0)
+        var isSpam = 0
+        if (instanceArray(1).equals("spam")) {
+          isSpam = 1
+        }
+        val features = instanceArray.slice(2, instanceArray.length).map { featureIndex => featureIndex.toInt }
+        // Parse input
+        // ..
+        (0, (docid, isSpam, features))
+      }).map(pair => {
+        (r.nextInt(), pair._2)
+      })
+        .sortByKey()
+        .map(pair => (0, pair._2))
+        .groupByKey(1).persist()
+
+      // w is the weight vector (make sure the variable is within scope) size=1000091 
+      var w = Map[Int, Double]()
+      var old_w = Map[Int, Double]()
+
+      // This is the main learner:
+      val delta = 0.002
+      var converged = false
+      var i = 1
+      val numIterations = 10000
+      val threshold = 1E-8
+
+      def spamminess(features: Array[Int]): Double = {
+        var score = 0d
+        features.foreach(f => if (w.contains(f)) score += w(f))
+        score
+      }
+      def isConverged(previousWeights: Map[Int, Double],
+        currentWeights: Map[Int, Double],
+        threshold: Double): Boolean = {
+        // To compare with convergence tolerance.
+        var flag = true
+        previousWeights.foreach(pair => {
+          if (currentWeights.contains(pair._1) && (currentWeights(pair._1) - pair._2) > threshold)
+            flag = false
         })
-          .sortByKey()
-          .map(pair => (0, pair._2))
-          .groupByKey(1).persist()
-        
-        // w is the weight vector (make sure the variable is within scope) size=1000091 
-        var w = Map[Int, Double]()
-        var old_w = Map[Int, Double]()
+        flag
+      }
 
-        // This is the main learner:
-        val delta = 0.002
-        var converged = false
-        var i = 1
-        val numIterations = 10000
-        val threshold = 1E-8
+      while (!converged && i < numIterations) {
+        //      var currentWeights=trained.context.broadcast(w)
+        old_w = w
+        val new_w = trained.mapPartitions(indexIterator => {
+          val instanceIterable = indexIterator.next._2
+          instanceIterable.foreach(tuple => {
+            val isSpam = tuple._2
+            val features = tuple._3
+            val score = spamminess(features)
+            val prob = 1.0 / (1 + exp(-score))
+            features.foreach(f => {
+              if (w.contains(f)) {
 
-        def spamminess(features: Array[Int]): Double = {
-          var score = 0d
-          features.foreach(f => if (w.contains(f)) score += w(f))
-          score
-        }
-        def isConverged(previousWeights: Map[Int, Double],
-          currentWeights: Map[Int, Double],
-          threshold: Double): Boolean = {
-          // To compare with convergence tolerance.
-          var flag = true
-          previousWeights.foreach(pair => {
-            if (currentWeights.contains(pair._1) && (currentWeights(pair._1) - pair._2) > threshold)
-              flag = false
-          })
-          flag
-        }
+                w = w updated (f, w(f) + (isSpam - prob) * delta)
+                //        w(f) = w(f)+(isSpam - prob) * delta
 
-        while (!converged && i < numIterations) {
-          //      var currentWeights=trained.context.broadcast(w)
-          old_w = w
-          val new_w = trained.mapPartitions(indexIterator => {
-            val instanceIterable = indexIterator.next._2
-            instanceIterable.foreach(tuple => {
-              val isSpam = tuple._2
-              val features = tuple._3
-              val score = spamminess(features)
-              val prob = 1.0 / (1 + exp(-score))
-              features.foreach(f => {
-                if (w.contains(f)) {
+              } else {
+                w = w updated (f, (isSpam - prob) * delta)
+                //        w(f) = (isSpam - prob) * delta
 
-                  w = w updated (f, w(f) + (isSpam - prob) * delta)
-                  //        w(f) = w(f)+(isSpam - prob) * delta
-
-                } else {
-                  w = w updated (f, (isSpam - prob) * delta)
-                  //        w(f) = (isSpam - prob) * delta
-
-                }
-
-              })
+              }
 
             })
-            w.toIterator
+
           })
-          w = (new_w.collectAsMap.toMap)
-          println("within update w has " + w.size.toString() + " old_w has " + old_w.size + " changed? " + (old_w.size == w.size))
+          w.toIterator
+        })
+        w = (new_w.collectAsMap.toMap)
+        println("within update w has " + w.size.toString() + " old_w has " + old_w.size + " changed? " + (old_w.size == w.size))
 
-          converged = isConverged(old_w, w, threshold)
-          i += 1
-        }
+        converged = isConverged(old_w, w, threshold)
+        i += 1
+      }
 
-        // Scores a document based on its list of features.
-        val model = sc.parallelize(w.toSeq, 1)
-        println("finished training in " + i + " iterations, this model has " + model.count().toString())
-        model.saveAsTextFile(args.model());
+      // Scores a document based on its list of features.
+      val model = sc.parallelize(w.toSeq, 1)
+      println("finished training in " + i + " iterations, this model has " + model.count().toString())
+      model.saveAsTextFile(args.model());
 
-      
     }
   }
 
