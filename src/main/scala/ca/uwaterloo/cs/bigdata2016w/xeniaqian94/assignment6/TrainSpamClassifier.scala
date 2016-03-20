@@ -55,7 +55,7 @@ object TrainSpamClassifier extends Tokenizer {
         // Parse input
         // ..
         (0, (docid, isSpam, features))
-      }).groupByKey(1).persist()
+      }).coalesce(1).groupByKey(1).persist()
 
       // w is the weight vector (make sure the variable is within scope) size=1000091 
       var w = Map[Int, Double]()
