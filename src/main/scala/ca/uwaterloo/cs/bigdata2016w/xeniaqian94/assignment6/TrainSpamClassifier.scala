@@ -85,9 +85,49 @@ object TrainSpamClassifier extends Tokenizer {
         flag
       }
 
-      while (!converged && i < numIterations) {
+//      while (!converged && i < numIterations) {
+//        //      var currentWeights=trained.context.broadcast(w)
+//        old_w = w
+//        val new_w = trained.mapPartitions(indexIterator => {
+//          val instanceIterable = indexIterator.next._2
+//          instanceIterable.foreach(tuple => {
+//            val isSpam = tuple._2
+//            val features = tuple._3
+//            val score = spamminess(features)
+//            val prob = 1.0 / (1 + exp(-score))
+//            features.foreach(f => {
+//              if (w.contains(f)) {
+//
+//                w = w updated (f, w(f) + (isSpam - prob) * delta)
+//                //        w(f) = w(f)+(isSpam - prob) * delta
+//
+//              } else {
+//                w = w updated (f, (isSpam - prob) * delta)
+//                //        w(f) = (isSpam - prob) * delta
+//
+//              }
+//
+//            })
+//
+//          })
+//          w.toIterator
+//        })
+//        w = (new_w.collectAsMap.toMap)
+//        println("within update w has " + w.size.toString() + " old_w has " + old_w.size + " changed? " + (old_w.size == w.size))
+//
+//        converged = isConverged(old_w, w, threshold)
+//        i += 1
+//      }
+//
+//      // Scores a document based on its list of features.
+//      val model = sc.parallelize(w.toSeq, 1)
+//      println("finished training in " + i + " iterations, this model has " + model.count().toString())
+//      model.saveAsTextFile(args.model());
+      
+      
+//      while (!converged && i < numIterations) {
         //      var currentWeights=trained.context.broadcast(w)
-        old_w = w
+//        old_w = w
         val new_w = trained.mapPartitions(indexIterator => {
           val instanceIterable = indexIterator.next._2
           instanceIterable.foreach(tuple => {
@@ -112,17 +152,17 @@ object TrainSpamClassifier extends Tokenizer {
           })
           w.toIterator
         })
-        w = (new_w.collectAsMap.toMap)
+//        w = (new_w.collectAsMap.toMap)
         println("within update w has " + w.size.toString() + " old_w has " + old_w.size + " changed? " + (old_w.size == w.size))
 
-        converged = isConverged(old_w, w, threshold)
-        i += 1
-      }
+//        converged = isConverged(old_w, w, threshold)
+//        i += 1
+//      }
 
       // Scores a document based on its list of features.
-      val model = sc.parallelize(w.toSeq, 1)
-      println("finished training in " + i + " iterations, this model has " + model.count().toString())
-      model.saveAsTextFile(args.model());
+//      val model = sc.parallelize(w.toSeq, 1)
+      println("finished training in " + i + " iterations, this model has " + new_w.count().toString())
+      new_w.saveAsTextFile(args.model());
 
     } else if (shuffle) {
       
