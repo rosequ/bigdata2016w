@@ -5,24 +5,24 @@ group_x: 17.25
 
 group_y: 12.82
 
-britney: 16.82
+britney: 16.82 (linux) 14.61 (Altiscale)
 
 ####Question 2: 
 What is the 1-ROCA% score of the score averaging technique in the 3-classifier ensemble?
 
-average: 11.84
+average: 11.84 (linux) 11.81 (Altiscale)
 
 
 ####Question 3: 
 What is the 1-ROCA% score of the voting technique in the 3-classifier ensemble?
 
-voting: 14.78
+voting: 14.78 (linux) 14.60 (Altiscale)
 
 
 ####Question 4: 
 What is the 1-ROCA% score of a single classifier trained on all available training data concatenated together?
 
-all: 16.29
+all: 16.29 (linux) 20.01 (Altiscale)
 
 ####Question 5: 
 Run the shuffle trainer 10 times on the britney dataset, predict and evaluate the classifier on the test data each time. Report the 1-ROCA% score in each of the ten trials and compute the overall average.
