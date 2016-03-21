@@ -27,6 +27,10 @@ all: 16.29 (linux) 20.01 (Altiscale)
 ####Question 5: 
 Run the shuffle trainer 10 times on the britney dataset, predict and evaluate the classifier on the test data each time. Report the 1-ROCA% score in each of the ten trials and compute the overall average.
 
-each of the 10 times: 16.98 17.61 14.58 18.08 19.42 16.55 19.96 19.84. 19.44 17.02
+(linux) each of the 10 times: 16.98 17.61 14.58 17.68 19.42 16.55 16.37 19.84. 19.44 17.02
 
-overall average 17.94
+overall average 17.54
+
+(Altiscale) each of the 10 times: 13.83 16.05 16.00 17.02 17.20 15.29 17.14 17.99 14.98 16.18
+
+overall average 16.17
