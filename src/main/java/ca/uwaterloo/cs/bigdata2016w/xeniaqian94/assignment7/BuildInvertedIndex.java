@@ -37,7 +37,7 @@ import tl.lin.data.pair.PairOfWritables;
 public class BuildInvertedIndex extends Configured implements Tool {
   private static final Logger LOG = Logger.getLogger(BuildInvertedIndex.class);
 
-  private static class MyMapper extends Mapper<LongWritable, Text, Text, PairOfInts> {
+  static class MyMapper extends Mapper<LongWritable, Text, Text, PairOfInts> {
     private static final Text WORD = new Text();
     private static final Object2IntFrequencyDistribution<String> COUNTS =
         new Object2IntFrequencyDistributionEntry<String>();
@@ -70,7 +70,7 @@ public class BuildInvertedIndex extends Configured implements Tool {
     }
   }
 
-  private static class MyReducer extends
+  static class MyReducer extends
       Reducer<Text, PairOfInts, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
     private final static IntWritable DF = new IntWritable();
 
