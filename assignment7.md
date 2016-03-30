@@ -15,14 +15,6 @@ Query: white red OR rose AND pluck AND
 	1713612	  SUFFOLK. I pluck this red rose with young Somerset,
 	1714623	    In sign whereof I pluck a white rose too.
 
-####Question 3: 
-
-
-
-
-
-上次的答案
-
 ####Question 3.
 
 Query: waterloo stanford OR cheriton AND
