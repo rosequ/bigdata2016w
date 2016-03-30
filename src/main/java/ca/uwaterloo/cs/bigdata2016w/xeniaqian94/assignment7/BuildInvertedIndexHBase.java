@@ -56,8 +56,9 @@ public class BuildInvertedIndexHBase extends Configured implements Tool {
 			Collections.sort(postings);
 			iter = postings.iterator();
 			while (iter.hasNext()) {
-				int docno = iter.next().getLeftElement();
-				int termFreq = iter.next().getRightElement();
+				PairOfInts thisPair=iter.next();
+				int docno = thisPair.getLeftElement();
+				int termFreq = thisPair.getRightElement();
 				put.add(CF, Bytes.toBytes(docno), Bytes.toBytes(termFreq));
 			}
 			context.write(null, put);
