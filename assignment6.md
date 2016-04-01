@@ -41,10 +41,9 @@ TrainSpamClassifier: 14/15
 ApplySpamClassifier: 5/5
 ApplyEnsembleClassifier: 6/6
 Shuffle implementation: 5/5
-Question Answers: 13.5/15
+Question Answers: 15/15
 Runs on Altiscale: 10/10
-Total: 58.5/60
+Total: 60/60
 
-- Q4 average is higher than expected (14% +- 3%) but your non-determinism wrt to linux and altiscale is within that range so you'll get some marks
 - TrainSpamClassifier has lots of duplicated code due to shuffle that is not necessary
 - The model does not need to be global for training and would potentially raise issues in a more complex application
