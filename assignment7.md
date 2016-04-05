@@ -34,3 +34,11 @@ Query: internet startup AND canada AND ontario AND
 	59973021	Amazon.com	Amazon.com, Inc. ( or), often referred to as simply Amazon, is an Ame...
 	718311526	Criticism of Facebook	Facebook has made changes throughout its lifespan from use...
 
+
+Marks
+BuildInvertedIndexHBase: 10/10
+BooleanRetrievalHBase: 5/5
+Shakespeare Sample: 5/5
+Wiki sample: 5/5
+Private: 5/5
+Total: 30/30
